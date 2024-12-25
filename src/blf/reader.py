@@ -4,7 +4,8 @@ import zlib
 from collections.abc import Iterator
 from contextlib import AbstractContextManager
 from io import BytesIO
-from typing import BinaryIO, Final, Union
+from types import TracebackType
+from typing import BinaryIO, Final, Optional, Union
 
 from blf.can import CanDriverError, CanDriverStatistic, CanFdMessage64
 from blf.constants import OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjTypeEnum
@@ -21,15 +22,18 @@ LOG = logging.getLogger("blf")
 class BlfReader(AbstractContextManager):
     def __init__(self, file: Union[str, bytes, os.PathLike, BinaryIO]):
         self._file: BinaryIO
-        if hasattr(file, "read"):
-            self._file = file
-        elif isinstance(file, (str, bytes, os.PathLike)):
+        if isinstance(file, (str, bytes, os.PathLike)):
             self._file = open(file, "rb")  # noqa: SIM115
+        elif isinstance(file, bytes):
+            self._file = BytesIO(file)
+        elif hasattr(file, "read"):
+            self._file = file
         else:
             err_msg = "Unsupported type {type(file)}"
             raise TypeError(err_msg)
 
-        if self._file.peek(len(b"LOGG")) != b"LOGG":
+        obj_data = self._file.read(FileStatisticsEx.FORMAT.size)
+        if len(obj_data) < FileStatisticsEx.FORMAT.size or not obj_data.startswith(b"LOGG"):
             err_msg = "Unexpected file format"
             raise ValueError(err_msg)
 
@@ -102,7 +106,12 @@ class BlfReader(AbstractContextManager):
     def __enter__(self) -> "BlfReader":
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(
+        self,
+        exc_type: Optional[type[BaseException]],
+        exc_value: Optional[BaseException],
+        traceback: Optional[TracebackType],
+    ) -> None:
         self._file.close()
 
 
