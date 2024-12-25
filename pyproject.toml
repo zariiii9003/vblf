@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "blf"
+description = "A library to read and write Vector BLF files (binary log format)"
+readme = "README.md"
+authors = [{ name = "Artur Drogunow", email = "Artur.Drogunow@zf.com" }]
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = []
+dynamic = ["version"]
+keywords = ["BLF", "Vector", "binary log format", "Automotive"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Issues = "https://github.com/zariiii9003/blf/issues"
+Source = "https://github.com/zariiii9003/blf"
+Homepage = "https://github.com/zariiii9003/blf"
+
+[tool.setuptools_scm]
+# presence of this section triggers setuptools_scm to manage the version
+
+[tool.ruff]
+line-length = 100
+lint.extend-select = [
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "E",     # pycodestyle
+    "EM",    # flake8-errmsg
+    "F",     # pyflakes
+    "G",     # flake8-logging-format
+    "I",     # isort
+    "N",     # pep8-naming
+    "PIE",   # flake8-pie
+    "PL",    # pylint
+    "RSE",   # flake8-raise
+    "RUF",   # Ruff-specific rules
+    "SIM",   # flake8-simplify
+    "TCH",   # flake8-type-checking
+    "UP",    # pyupgrade
+    "W",     # pycodestyle
+]
+lint.per-file-ignores."tests/**.py" = [
+    "PL",    # pylint
+]
