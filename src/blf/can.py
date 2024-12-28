@@ -6,6 +6,69 @@ from typing import ClassVar
 from .general import ObjectHeader
 
 
+@dataclass
+class CanMessage(ObjectHeader):
+    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HBBI8s")
+    channel: int
+    flags: int
+    dlc: int
+    frame_id: int
+    data: bytes
+
+    @classmethod
+    def deserialize(cls, data: bytes) -> "CanMessage":
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            flags,
+            dlc,
+            frame_id,
+            data_,
+        ) = cls.FORMAT.unpack_from(data)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            flags,
+            dlc,
+            frame_id,
+            data_,
+        )
+
+    def serialize(self) -> bytes:
+        return self.FORMAT.pack(
+            self.signature,
+            self.header_size,
+            self.header_version,
+            self.object_size,
+            self.object_type,
+            self.object_flags,
+            self.client_index,
+            self.object_version,
+            self.object_time_stamp,
+            self.channel,
+            self.flags,
+            self.dlc,
+            self.frame_id,
+            self.data,
+        )
+
+
 class CanFdMessage64Flags(IntFlag):
     NERR = 0x0004
     HIGH_VOLTAGE_WAKE_UP = 0x0008
@@ -40,8 +103,7 @@ class CanFdMessage(ObjectHeader):
     reserved3: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanFdMessage64":
-        # get fixed size values
+    def deserialize(cls, data: bytes) -> "CanFdMessage":
         (
             signature,
             header_size,
@@ -398,7 +460,7 @@ class CanFdErrorFrame64(ObjectHeader):
     btr_ext_data: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanFdMessage64":
+    def deserialize(cls, data: bytes) -> "CanFdErrorFrame64":
         # get fixed size values
         (
             signature,

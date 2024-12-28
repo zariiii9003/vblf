@@ -6,8 +6,29 @@ from blf.can import (
     CanFdMessage,
     CanFdMessage64,
     CanFdMessage64Flags,
+    CanMessage,
 )
 from tests import DATA_DIR
+
+
+def test_can_message():
+    raw = (DATA_DIR / "CAN_MESSAGE.lobj").read_bytes()
+    obj = CanMessage.deserialize(raw)
+    assert obj.signature == b"LOBJ"
+    assert obj.header_size == 32
+    assert obj.header_version == 1
+    assert obj.object_size == 48
+    assert obj.object_type == 1
+    assert obj.object_flags == 2
+    assert obj.client_index == 4369
+    assert obj.object_version == 0
+    assert obj.object_time_stamp == 2459565876494606882
+    assert obj.channel == 4369
+    assert obj.flags == 34
+    assert obj.dlc == 51
+    assert obj.frame_id == 1145324612
+    assert obj.data == bytes([0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC])
+    assert obj.serialize() == raw
 
 
 def test_canfd_message():
