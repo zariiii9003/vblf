@@ -16,7 +16,7 @@ class CanMessage(ObjectHeader):
     data: bytes
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanMessage":
+    def unpack(cls, data: bytes) -> "CanMessage":
         (
             signature,
             header_size,
@@ -50,7 +50,7 @@ class CanMessage(ObjectHeader):
             data_,
         )
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(
             self.signature,
             self.header_size,
@@ -83,7 +83,7 @@ class CanMessage2(ObjectHeader):
     reserved2: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanMessage2":
+    def unpack(cls, data: bytes) -> "CanMessage2":
         (
             signature,
             header_size,
@@ -125,7 +125,7 @@ class CanMessage2(ObjectHeader):
             reserved2,
         )
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(
             self.signature,
             self.header_size,
@@ -182,7 +182,7 @@ class CanFdMessage(ObjectHeader):
     reserved3: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanFdMessage":
+    def unpack(cls, data: bytes) -> "CanFdMessage":
         (
             signature,
             header_size,
@@ -230,7 +230,7 @@ class CanFdMessage(ObjectHeader):
             reserved3,
         )
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(
             self.signature,
             self.header_size,
@@ -280,7 +280,7 @@ class CanFdMessage64(ObjectHeader):
     btr_ext_data: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanFdMessage64":
+    def unpack(cls, data: bytes) -> "CanFdMessage64":
         # get fixed size values
         (
             signature,
@@ -344,10 +344,10 @@ class CanFdMessage64(ObjectHeader):
             btr_ext_data,
         )
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         raw = bytearray(self.object_size)
 
-        # serialize fixed size values
+        # pack fixed size values
         self.FORMAT.pack_into(
             raw,
             0,
@@ -377,10 +377,10 @@ class CanFdMessage64(ObjectHeader):
             self.crc,
         )
 
-        # serialize data
+        # pack data
         raw[self.FORMAT.size : self.FORMAT.size + self.valid_data_bytes] = self.data
 
-        # serialize ext frame data
+        # pack ext frame data
         if self.object_size >= self.ext_data_offset + self.FORMAT_EXT.size:
             self.FORMAT_EXT.pack_into(
                 raw, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data
@@ -402,10 +402,10 @@ class CanDriverStatistic(ObjectHeader):
     reserved: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanDriverStatistic":
+    def unpack(cls, data: bytes) -> "CanDriverStatistic":
         return cls(*cls.FORMAT.unpack(data))
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(*self.__dict__.values())
 
 
@@ -418,10 +418,10 @@ class CanDriverError(ObjectHeader):
     error_code: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanDriverError":
+    def unpack(cls, data: bytes) -> "CanDriverError":
         return cls(*cls.FORMAT.unpack(data))
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(*self.__dict__.values())
 
 
@@ -439,7 +439,7 @@ class CanDriverErrorExt(ObjectHeader):
     reserved3: list[int]
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanDriverErrorExt":
+    def unpack(cls, data: bytes) -> "CanDriverErrorExt":
         (
             signature,
             header_size,
@@ -484,7 +484,7 @@ class CanDriverErrorExt(ObjectHeader):
             [reserved3_0, reserved3_1, reserved3_2, reserved3_3],
         )
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(
             self.signature,
             self.header_size,
@@ -539,7 +539,7 @@ class CanFdErrorFrame64(ObjectHeader):
     btr_ext_data: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "CanFdErrorFrame64":
+    def unpack(cls, data: bytes) -> "CanFdErrorFrame64":
         # get fixed size values
         (
             signature,
@@ -609,10 +609,10 @@ class CanFdErrorFrame64(ObjectHeader):
             btr_ext_data,
         )
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         raw = bytearray(self.object_size)
 
-        # serialize fixed size values
+        # pack fixed size values
         self.FORMAT.pack_into(
             raw,
             0,
@@ -645,10 +645,10 @@ class CanFdErrorFrame64(ObjectHeader):
             self.reserved2,
         )
 
-        # serialize data
+        # pack data
         raw[self.FORMAT.size : self.FORMAT.size + self.valid_data_bytes] = self.data
 
-        # serialize ext frame data
+        # pack ext frame data
         if self.object_size >= self.ext_data_offset + self.FORMAT_EXT.size:
             self.FORMAT_EXT.pack_into(
                 raw, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data

@@ -46,9 +46,7 @@ class BlfReader(AbstractContextManager):
             err_msg = "Unexpected file format"
             raise ValueError(err_msg)
 
-        self.file_statistics = FileStatistics.deserialize(
-            self._file.read(FileStatistics.FORMAT.size)
-        )
+        self.file_statistics = FileStatistics.unpack(self._file.read(FileStatistics.FORMAT.size))
 
         self._incomplete_data: bytes = b""
         self._generator = self._generate_objects(self._file)
@@ -72,7 +70,7 @@ class BlfReader(AbstractContextManager):
                 break
 
             # read object data
-            header_base = ObjectHeaderBase.deserialize(header_base_data)
+            header_base = ObjectHeaderBase.unpack(header_base_data)
             obj_data = header_base_data + stream.read(
                 header_base.object_size - ObjectHeaderBase.FORMAT.size
             )
@@ -93,7 +91,7 @@ class BlfReader(AbstractContextManager):
 
             if obj_class is LogContainer:
                 # decompress data
-                container = LogContainer.deserialize(obj_data)
+                container = LogContainer.unpack(obj_data)
                 uncompressed = (
                     zlib.decompress(container.data)
                     if self.file_statistics.compression_level
@@ -108,7 +106,7 @@ class BlfReader(AbstractContextManager):
                 yield from self._generate_objects(BytesIO(uncompressed))
 
             else:
-                yield obj_class.deserialize(obj_data)
+                yield obj_class.unpack(obj_data)
 
     def __iter__(self) -> Iterator[ObjectHeaderBase]:
         return self._generator.__iter__()

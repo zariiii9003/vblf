@@ -4,7 +4,7 @@ from tests import DATA_DIR
 
 def test_file_statistics():
     raw = (DATA_DIR / "FILE_STATISTICS.logg").read_bytes()
-    obj = FileStatistics.deserialize(raw)
+    obj = FileStatistics.unpack(raw)
     assert obj.signature == b"LOGG"
     assert obj.statistics_size == 144
     assert obj.api_number == 0x3E4630
@@ -31,12 +31,12 @@ def test_file_statistics():
     assert obj.last_object_time.second == 50
     assert obj.last_object_time.milliseconds == 712
     assert obj.restore_points_offset == 24751994
-    assert obj.serialize() == raw
+    assert obj.pack() == raw
 
 
 def test_app_text():
     raw = (DATA_DIR / "APP_TEXT.lobj").read_bytes()
-    obj = AppText.deserialize(raw)
+    obj = AppText.unpack(raw)
     assert obj.signature == b"LOBJ"
     assert obj.header_size == 32
     assert obj.header_version == 1
@@ -51,4 +51,4 @@ def test_app_text():
     assert obj.text_length == 49
     assert obj.reserved2 == 0
     assert obj.text == "C:\\Users\\user\\Desktop\\project car\\myDatabase.dbc"
-    assert obj.serialize() == raw
+    assert obj.pack() == raw

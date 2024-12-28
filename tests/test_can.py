@@ -14,7 +14,7 @@ from tests import DATA_DIR
 
 def test_can_message():
     raw = (DATA_DIR / "CAN_MESSAGE.lobj").read_bytes()
-    obj = CanMessage.deserialize(raw)
+    obj = CanMessage.unpack(raw)
     assert obj.signature == b"LOBJ"
     assert obj.header_size == 32
     assert obj.header_version == 1
@@ -29,12 +29,12 @@ def test_can_message():
     assert obj.dlc == 51
     assert obj.frame_id == 1145324612
     assert obj.data == bytes([0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC])
-    assert obj.serialize() == raw
+    assert obj.pack() == raw
 
 
 def test_can_message2():
     raw = (DATA_DIR / "CAN_MESSAGE2.lobj").read_bytes()
-    obj = CanMessage2.deserialize(raw)
+    obj = CanMessage2.unpack(raw)
     assert obj.signature == b"LOBJ"
     assert obj.header_size == 32
     assert obj.header_version == 1
@@ -53,12 +53,12 @@ def test_can_message2():
     assert obj.bit_count == 238
     assert obj.reserved1 == 255
     assert obj.reserved2 == 4369
-    assert obj.serialize() == raw
+    assert obj.pack() == raw
 
 
 def test_canfd_message():
     raw = (DATA_DIR / "CAN_FD_MESSAGE.lobj").read_bytes()
-    obj = CanFdMessage.deserialize(raw)
+    obj = CanFdMessage.unpack(raw)
     assert obj.signature == b"LOBJ"
     assert obj.header_size == 32
     assert obj.header_version == 1
@@ -79,12 +79,12 @@ def test_canfd_message():
     assert obj.reserved2 == 2863311530
     assert obj.data == bytes(range(64))
     assert obj.reserved3 == 0
-    assert obj.serialize() == raw
+    assert obj.pack() == raw
 
 
 def test_canfd_message64():
     raw = (DATA_DIR / "CAN_FD_MESSAGE_64.lobj").read_bytes()
-    obj = CanFdMessage64.deserialize(raw)
+    obj = CanFdMessage64.unpack(raw)
     assert obj.signature == b"LOBJ"
     assert obj.header_size == 32
     assert obj.header_version == 1
@@ -113,12 +113,12 @@ def test_canfd_message64():
     assert obj.data == b"\xb8\xda\x1f\x80\xff\x00\x00\x00"
     assert obj.btr_ext_arb == 536942390
     assert obj.btr_ext_data == 536873244
-    assert obj.serialize() == raw
+    assert obj.pack() == raw
 
 
 def test_can_driver_statistic():
     raw = (DATA_DIR / "CAN_STATISTIC.lobj").read_bytes()
-    obj = CanDriverStatistic.deserialize(raw)
+    obj = CanDriverStatistic.unpack(raw)
     assert obj.signature == b"LOBJ"
     assert obj.header_size == 32
     assert obj.header_version == 1
@@ -137,12 +137,12 @@ def test_can_driver_statistic():
     assert obj.error_frames == 0
     assert obj.overload_frames == 0
     assert obj.reserved == 0
-    assert obj.serialize() == raw
+    assert obj.pack() == raw
 
 
 def test_can_driver_error():
     raw = (DATA_DIR / "CAN_DRIVER_ERROR.lobj").read_bytes()
-    obj = CanDriverError.deserialize(raw)
+    obj = CanDriverError.unpack(raw)
     assert obj.signature == b"LOBJ"
     assert obj.header_size == 32
     assert obj.header_version == 1
@@ -156,12 +156,12 @@ def test_can_driver_error():
     assert obj.tx_errors == 0
     assert obj.rx_errors == 0
     assert obj.error_code == 104
-    assert obj.serialize() == raw
+    assert obj.pack() == raw
 
 
 def test_can_driver_error_ext():
     raw = (DATA_DIR / "CAN_DRIVER_ERROR_EXT.lobj").read_bytes()
-    obj = CanDriverErrorExt.deserialize(raw)
+    obj = CanDriverErrorExt.unpack(raw)
     assert obj.signature == b"LOBJ"
     assert obj.header_size == 32
     assert obj.header_version == 1
@@ -177,12 +177,12 @@ def test_can_driver_error_ext():
     assert obj.error_code == 1145324612
     assert obj.flags == 1431655765
     assert obj.state == 102
-    assert obj.serialize() == raw
+    assert obj.pack() == raw
 
 
 def test_canfd_error_frame64():
     raw = (DATA_DIR / "CAN_FD_ERROR_64.lobj").read_bytes()
-    obj = CanFdErrorFrame64.deserialize(raw)
+    obj = CanFdErrorFrame64.unpack(raw)
     assert obj.signature == b"LOBJ"
     assert obj.header_size == 32
     assert obj.header_version == 1
@@ -213,4 +213,4 @@ def test_canfd_error_frame64():
     assert obj.data == bytes(range(64))
     assert obj.btr_ext_arb == 286331153
     assert obj.btr_ext_data == 572662306
-    assert obj.serialize() == raw
+    assert obj.pack() == raw

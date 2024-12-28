@@ -16,10 +16,10 @@ class SystemTime:
     milliseconds: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "SystemTime":
+    def unpack(cls, data: bytes) -> "SystemTime":
         return cls(*cls.FORMAT.unpack(data))
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(*self.__dict__.values())
 
 
@@ -33,10 +33,10 @@ class ObjectHeaderBase:
     object_type: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "ObjectHeaderBase":
+    def unpack(cls, data: bytes) -> "ObjectHeaderBase":
         return cls(*cls.FORMAT.unpack(data))
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(*self.__dict__.values())
 
 
@@ -49,10 +49,10 @@ class VarObjectHeader(ObjectHeaderBase):
     object_time_stamp: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "VarObjectHeader":
+    def unpack(cls, data: bytes) -> "VarObjectHeader":
         return cls(*cls.FORMAT.unpack(data))
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(*self.__dict__.values())
 
 
@@ -65,10 +65,10 @@ class ObjectHeader(ObjectHeaderBase):
     object_time_stamp: int
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "ObjectHeader":
+    def unpack(cls, data: bytes) -> "ObjectHeader":
         return cls(*cls.FORMAT.unpack(data))
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(*self.__dict__.values())
 
 
@@ -83,10 +83,10 @@ class ObjectHeader(ObjectHeaderBase):
 #     original_time_stamp: int
 
 #     @classmethod
-#     def deserialize(cls, data: bytes) -> "ObjectHeader2":
+#     def unpack(cls, data: bytes) -> "ObjectHeader2":
 #         return cls(*cls.FORMAT.unpack(data))
 
-#     def serialize(self) -> bytes:
+#     def pack(self) -> bytes:
 #         return self.FORMAT.pack(*self.__dict__.values())
 
 
@@ -112,7 +112,7 @@ class FileStatistics:
     reserved: bytes
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "FileStatistics":
+    def unpack(cls, data: bytes) -> "FileStatistics":
         (
             signature,
             statistics_size,
@@ -180,7 +180,7 @@ class FileStatistics:
             reserved,
         )
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         return self.FORMAT.pack(
             self.signature,
             self.statistics_size,
@@ -205,7 +205,7 @@ class LogContainer(ObjectHeader):
     data: bytes
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "LogContainer":
+    def unpack(cls, data: bytes) -> "LogContainer":
         (
             signature,
             header_size,
@@ -230,8 +230,8 @@ class LogContainer(ObjectHeader):
             data[header_size:],
         )
 
-    def serialize(self) -> bytes:
-        return super().serialize() + self.data
+    def pack(self) -> bytes:
+        return super().pack() + self.data
 
 
 @dataclass
@@ -244,7 +244,7 @@ class AppText(ObjectHeader):
     text: str
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "AppText":
+    def unpack(cls, data: bytes) -> "AppText":
         (
             signature,
             header_size,
@@ -278,7 +278,7 @@ class AppText(ObjectHeader):
             text,
         )
 
-    def serialize(self) -> bytes:
+    def pack(self) -> bytes:
         raw = bytearray(self.object_size)
         self.FORMAT.pack_into(
             raw,
