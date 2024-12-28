@@ -19,7 +19,7 @@ from blf.can import (
 from blf.constants import OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjTypeEnum
 from blf.general import (
     AppText,
-    FileStatisticsEx,
+    FileStatistics,
     LogContainer,
     ObjectHeaderBase,
 )
@@ -40,13 +40,13 @@ class BlfReader(AbstractContextManager):
             err_msg = "Unsupported type {type(file)}"
             raise TypeError(err_msg)
 
-        obj_data = self._file.read(FileStatisticsEx.FORMAT.size)
-        if len(obj_data) < FileStatisticsEx.FORMAT.size or not obj_data.startswith(b"LOGG"):
+        obj_data = self._file.read(FileStatistics.FORMAT.size)
+        if len(obj_data) < FileStatistics.FORMAT.size or not obj_data.startswith(b"LOGG"):
             err_msg = "Unexpected file format"
             raise ValueError(err_msg)
 
-        self.file_statistics = FileStatisticsEx.deserialize(
-            self._file.read(FileStatisticsEx.FORMAT.size)
+        self.file_statistics = FileStatistics.deserialize(
+            self._file.read(FileStatistics.FORMAT.size)
         )
 
         self._incomplete_data: bytes = b""

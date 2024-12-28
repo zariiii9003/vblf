@@ -91,7 +91,7 @@ class ObjectHeader(ObjectHeaderBase):
 
 
 @dataclass
-class FileStatisticsEx:
+class FileStatistics:
     FORMAT: ClassVar[struct.Struct] = struct.Struct(
         "4sIIBBBBQQII" + SystemTime.FORMAT.format + SystemTime.FORMAT.format + "Q64s"
     )
@@ -112,7 +112,7 @@ class FileStatisticsEx:
     reserved: bytes
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "FileStatisticsEx":
+    def deserialize(cls, data: bytes) -> "FileStatistics":
         (
             signature,
             statistics_size,

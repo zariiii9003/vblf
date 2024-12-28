@@ -1,10 +1,10 @@
-from blf.general import AppText, FileStatisticsEx
+from blf.general import AppText, FileStatistics
 from tests import DATA_DIR
 
 
 def test_file_statistics():
     raw = (DATA_DIR / "FILE_STATISTICS.logg").read_bytes()
-    obj = FileStatisticsEx.deserialize(raw)
+    obj = FileStatistics.deserialize(raw)
     assert obj.signature == b"LOGG"
     assert obj.statistics_size == 144
     assert obj.api_number == 0x3E4630
