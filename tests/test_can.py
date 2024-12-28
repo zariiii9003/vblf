@@ -3,10 +3,37 @@ from blf.can import (
     CanDriverErrorExt,
     CanDriverStatistic,
     CanFdErrorFrame64,
+    CanFdMessage,
     CanFdMessage64,
     CanFdMessage64Flags,
 )
 from tests import DATA_DIR
+
+
+def test_canfd_message():
+    raw = (DATA_DIR / "CAN_FD_MESSAGE.lobj").read_bytes()
+    obj = CanFdMessage.deserialize(raw)
+    assert obj.signature == b"LOBJ"
+    assert obj.header_size == 32
+    assert obj.header_version == 1
+    assert obj.object_size == 120
+    assert obj.object_type == 100
+    assert obj.object_flags == 2
+    assert obj.client_index == 4369
+    assert obj.object_version == 0
+    assert obj.object_time_stamp == 2459565876494606882
+    assert obj.channel == 4369
+    assert obj.dlc == 51
+    assert obj.frame_id == 1145324612
+    assert obj.frame_length == 1431655765
+    assert obj.arb_bit_count == 102
+    assert obj.canfd_flags == 119
+    assert obj.valid_data_bytes == 64
+    assert obj.reserved1 == 153
+    assert obj.reserved2 == 2863311530
+    assert obj.data == bytes(range(64))
+    assert obj.reserved3 == 0
+    assert obj.serialize() == raw
 
 
 def test_canfd_message64():

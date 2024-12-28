@@ -24,6 +24,98 @@ class CanFdMessage64Flags(IntFlag):
 
 
 @dataclass
+class CanFdMessage(ObjectHeader):
+    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HBBIIBBBBI64sI")
+    channel: int
+    flags: int
+    dlc: int
+    frame_id: int
+    frame_length: int
+    arb_bit_count: int
+    canfd_flags: int
+    valid_data_bytes: int
+    reserved1: int
+    reserved2: int
+    data: bytes
+    reserved3: int
+
+    @classmethod
+    def deserialize(cls, data: bytes) -> "CanFdMessage64":
+        # get fixed size values
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            flags,
+            dlc,
+            frame_id,
+            frame_length,
+            arb_bit_count,
+            canfd_flags,
+            valid_data_bytes,
+            reserved1,
+            reserved2,
+            data_,
+            reserved3,
+        ) = cls.FORMAT.unpack_from(data)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            flags,
+            dlc,
+            frame_id,
+            frame_length,
+            arb_bit_count,
+            canfd_flags,
+            valid_data_bytes,
+            reserved1,
+            reserved2,
+            data_,
+            reserved3,
+        )
+
+    def serialize(self) -> bytes:
+        return self.FORMAT.pack(
+            self.signature,
+            self.header_size,
+            self.header_version,
+            self.object_size,
+            self.object_type,
+            self.object_flags,
+            self.client_index,
+            self.object_version,
+            self.object_time_stamp,
+            self.channel,
+            self.flags,
+            self.dlc,
+            self.frame_id,
+            self.frame_length,
+            self.arb_bit_count,
+            self.canfd_flags,
+            self.valid_data_bytes,
+            self.reserved1,
+            self.reserved2,
+            self.data,
+            self.reserved3,
+        )
+
+
+@dataclass
 class CanFdMessage64(ObjectHeader):
     FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "BBBBIIIIIIIHBBI")
     FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")
