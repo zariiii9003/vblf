@@ -109,11 +109,76 @@ class FileStatisticsEx:
     measurement_start_time: SystemTime  # offset: 0x28
     last_object_time: SystemTime  # offset: 0x38
     restore_points_offset: int  # offset: 0x48
+    reserved: bytes
 
     @classmethod
     def deserialize(cls, data: bytes) -> "FileStatisticsEx":
-        values = cls.FORMAT.unpack(data)
-        return cls(*values[:11], SystemTime(*values[11:19]), SystemTime(*values[19:27]), values[27])
+        (
+            signature,
+            statistics_size,
+            api_number,
+            application_id,
+            compression_level,
+            application_major,
+            application_minor,
+            file_size,
+            uncompressed_file_size,
+            object_count,
+            application_build,
+            measurement_start_time_year,
+            measurement_start_time_month,
+            measurement_start_time_day_of_week,
+            measurement_start_time_day,
+            measurement_start_time_hour,
+            measurement_start_time_minute,
+            measurement_start_time_second,
+            measurement_start_time_milliseconds,
+            last_object_time_year,
+            last_object_time_month,
+            last_object_time_day_of_week,
+            last_object_time_day,
+            last_object_time_hour,
+            last_object_time_minute,
+            last_object_time_second,
+            last_object_time_milliseconds,
+            restore_points_offset,
+            reserved,
+        ) = cls.FORMAT.unpack(data)
+        return cls(
+            signature,
+            statistics_size,
+            api_number,
+            application_id,
+            compression_level,
+            application_major,
+            application_minor,
+            file_size,
+            uncompressed_file_size,
+            object_count,
+            application_build,
+            SystemTime(
+                measurement_start_time_year,
+                measurement_start_time_month,
+                measurement_start_time_day_of_week,
+                measurement_start_time_day,
+                measurement_start_time_hour,
+                measurement_start_time_minute,
+                measurement_start_time_second,
+                measurement_start_time_milliseconds,
+            ),
+            SystemTime(
+                last_object_time_year,
+                last_object_time_month,
+                last_object_time_day_of_week,
+                last_object_time_day,
+                last_object_time_hour,
+                last_object_time_minute,
+                last_object_time_second,
+                last_object_time_milliseconds,
+            ),
+            restore_points_offset,
+            reserved,
+        )
 
     def serialize(self) -> bytes:
         return self.FORMAT.pack(
@@ -131,7 +196,7 @@ class FileStatisticsEx:
             *self.measurement_start_time.__dict__.values(),
             *self.last_object_time.__dict__.values(),
             self.restore_points_offset,
-            bytes(64),
+            self.reserved,
         )
 
 
@@ -141,14 +206,32 @@ class LogContainer(ObjectHeader):
 
     @classmethod
     def deserialize(cls, data: bytes) -> "LogContainer":
-        header_values = cls.FORMAT.unpack(data[: cls.FORMAT.size])
-        data = data[cls.FORMAT.size :]
-        return cls(*header_values, data)
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+        ) = cls.FORMAT.unpack_from(data)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            data[header_size:],
+        )
 
     def serialize(self) -> bytes:
-        header_values = list(self.__dict__.values())[:-1]
-        print(header_values)
-        return self.FORMAT.pack(*header_values) + self.data
+        return super().serialize() + self.data
 
 
 @dataclass
@@ -162,16 +245,58 @@ class AppText(ObjectHeader):
 
     @classmethod
     def deserialize(cls, data: bytes) -> "AppText":
-        fixed_size_values = cls.FORMAT.unpack(data[: cls.FORMAT.size])
-        text_length = fixed_size_values[11]
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            source,
+            reserved1,
+            text_length,
+            reserved2,
+        ) = cls.FORMAT.unpack_from(data)
         text = data[cls.FORMAT.size : cls.FORMAT.size + text_length - 1].decode("mbcs")
-        return cls(*fixed_size_values, text)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            source,
+            reserved1,
+            text_length,
+            reserved2,
+            text,
+        )
 
     def serialize(self) -> bytes:
         raw = bytearray(self.object_size)
-        fixed_size_values = list(self.__dict__.values())[:13]
-        raw[: self.FORMAT.size] = self.FORMAT.pack(*fixed_size_values)
-        raw[self.FORMAT.size : self.FORMAT.size + self.text_length] = (
-            self.text.encode("mbcs") + b"\x00"
+        self.FORMAT.pack_into(
+            raw,
+            0,
+            self.signature,
+            self.header_size,
+            self.header_version,
+            self.object_size,
+            self.object_type,
+            self.object_flags,
+            self.client_index,
+            self.object_version,
+            self.object_time_stamp,
+            self.source,
+            self.reserved1,
+            self.text_length,
+            self.reserved2,
         )
+        encoded_text = self.text.encode("mbcs") + b"\x00"
+        raw[self.FORMAT.size : self.FORMAT.size + self.text_length] = encoded_text
         return bytes(raw)
