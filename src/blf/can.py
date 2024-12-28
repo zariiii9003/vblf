@@ -69,6 +69,85 @@ class CanMessage(ObjectHeader):
         )
 
 
+@dataclass
+class CanMessage2(ObjectHeader):
+    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HBBI8sIBBH")
+    channel: int
+    flags: int
+    dlc: int
+    frame_id: int
+    data: bytes
+    frame_length: int
+    bit_count: int
+    reserved1: int
+    reserved2: int
+
+    @classmethod
+    def deserialize(cls, data: bytes) -> "CanMessage2":
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            flags,
+            dlc,
+            frame_id,
+            data_,
+            frame_length,
+            bit_count,
+            reserved1,
+            reserved2,
+        ) = cls.FORMAT.unpack_from(data)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            flags,
+            dlc,
+            frame_id,
+            data_,
+            frame_length,
+            bit_count,
+            reserved1,
+            reserved2,
+        )
+
+    def serialize(self) -> bytes:
+        return self.FORMAT.pack(
+            self.signature,
+            self.header_size,
+            self.header_version,
+            self.object_size,
+            self.object_type,
+            self.object_flags,
+            self.client_index,
+            self.object_version,
+            self.object_time_stamp,
+            self.channel,
+            self.flags,
+            self.dlc,
+            self.frame_id,
+            self.data,
+            self.frame_length,
+            self.bit_count,
+            self.reserved1,
+            self.reserved2,
+        )
+
+
 class CanFdMessage64Flags(IntFlag):
     NERR = 0x0004
     HIGH_VOLTAGE_WAKE_UP = 0x0008

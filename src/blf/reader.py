@@ -15,6 +15,7 @@ from blf.can import (
     CanFdMessage,
     CanFdMessage64,
     CanMessage,
+    CanMessage2,
 )
 from blf.constants import OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjTypeEnum
 from blf.general import (
@@ -131,6 +132,7 @@ OBJ_MAP: Final[dict[int, type[ObjectHeaderBase]]] = {
     ObjTypeEnum.CAN_DRIVER_ERROR.value: CanDriverError,
     ObjTypeEnum.APP_TEXT.value: AppText,
     ObjTypeEnum.CAN_DRIVER_ERROR_EXT.value: CanDriverErrorExt,
+    ObjTypeEnum.CAN_MESSAGE2.value: CanMessage2,
     ObjTypeEnum.CAN_FD_MESSAGE.value: CanFdMessage,
     ObjTypeEnum.CAN_FD_MESSAGE_64.value: CanFdMessage64,
     ObjTypeEnum.CAN_FD_ERROR_64.value: CanFdErrorFrame64,
