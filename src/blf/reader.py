@@ -54,7 +54,7 @@ class BlfReader(AbstractContextManager):
         while True:
             signature = stream.read(OBJ_SIGNATURE_SIZE)
             if len(signature) != OBJ_SIGNATURE_SIZE:
-                # EOF
+                self._incomplete_data = signature
                 break
             if signature != OBJ_SIGNATURE:
                 # skip padding byte and try again
@@ -65,6 +65,7 @@ class BlfReader(AbstractContextManager):
                 ObjectHeaderBase.FORMAT.size - OBJ_SIGNATURE_SIZE
             )
             if len(header_base_data) < ObjectHeaderBase.FORMAT.size:
+                self._incomplete_data = header_base_data
                 break
 
             # read object data
