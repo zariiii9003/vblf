@@ -74,13 +74,12 @@ class CanFdMessage64(ObjectHeader):
             dir,
             ext_data_offset,
             crc,
-        ) = cls.FORMAT.unpack(data[: cls.FORMAT.size])
+        ) = cls.FORMAT.unpack_from(data)
 
         # get ext frame data
         btr_ext_arb, btr_ext_data = 0, 0
         if object_size >= ext_data_offset + cls.FORMAT_EXT.size:
-            ext_data = data[ext_data_offset : ext_data_offset + cls.FORMAT_EXT.size]
-            btr_ext_arb, btr_ext_data = cls.FORMAT_EXT.unpack(ext_data)
+            btr_ext_arb, btr_ext_data = cls.FORMAT_EXT.unpack_from(data, ext_data_offset)
 
         return cls(
             signature,
@@ -116,7 +115,9 @@ class CanFdMessage64(ObjectHeader):
         raw = bytearray(self.object_size)
 
         # serialize fixed size values
-        raw[: self.FORMAT.size] = self.FORMAT.pack(
+        self.FORMAT.pack_into(
+            raw,
+            0,
             self.signature,
             self.header_size,
             self.header_version,
@@ -148,8 +149,8 @@ class CanFdMessage64(ObjectHeader):
 
         # serialize ext frame data
         if self.object_size >= self.ext_data_offset + self.FORMAT_EXT.size:
-            raw[self.ext_data_offset : self.ext_data_offset + self.FORMAT_EXT.size] = (
-                self.FORMAT_EXT.pack(self.btr_ext_arb, self.btr_ext_data)
+            self.FORMAT_EXT.pack_into(
+                raw, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data
             )
         return bytes(raw)
 
@@ -274,3 +275,149 @@ class CanDriverErrorExt(ObjectHeader):
             self.reserved3[2],
             self.reserved3[3],
         )
+
+
+@dataclass
+class CanFdErrorFrame64(ObjectHeader):
+    FORMAT: ClassVar[struct.Struct] = struct.Struct(
+        ObjectHeader.FORMAT.format + "BBBBHHHBBIIIIIIIHH"
+    )
+    FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")
+    channel: int
+    dlc: int
+    valid_data_bytes: int
+    ecc: int
+    flags: int
+    error_code_ext: int
+    ext_flags: int
+    ext_data_offset: int
+    reserved1: int
+    frame_id: int
+    frame_length: int
+    btr_cfg_arb: int
+    btr_cfg_data: int
+    time_offset_brs_ns: int
+    time_offset_crc_del_ns: int
+    crc: int
+    error_position: int
+    reserved2: int
+    data: bytes
+    btr_ext_arb: int
+    btr_ext_data: int
+
+    @classmethod
+    def deserialize(cls, data: bytes) -> "CanFdMessage64":
+        # get fixed size values
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            dlc,
+            valid_data_bytes,
+            ecc,
+            flags,
+            error_code_ext,
+            ext_flags,
+            ext_data_offset,
+            reserved1,
+            frame_id,
+            frame_length,
+            btr_cfg_arb,
+            btr_cfg_data,
+            time_offset_brs_ns,
+            time_offset_crc_del_ns,
+            crc,
+            error_position,
+            reserved2,
+        ) = cls.FORMAT.unpack_from(data)
+
+        # get ext frame data
+        btr_ext_arb, btr_ext_data = 0, 0
+        if object_size >= ext_data_offset + cls.FORMAT_EXT.size:
+            btr_ext_arb, btr_ext_data = cls.FORMAT_EXT.unpack_from(data, ext_data_offset)
+
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            dlc,
+            valid_data_bytes,
+            ecc,
+            flags,
+            error_code_ext,
+            ext_flags,
+            ext_data_offset,
+            reserved1,
+            frame_id,
+            frame_length,
+            btr_cfg_arb,
+            btr_cfg_data,
+            time_offset_brs_ns,
+            time_offset_crc_del_ns,
+            crc,
+            error_position,
+            reserved2,
+            data[cls.FORMAT.size : cls.FORMAT.size + valid_data_bytes],
+            btr_ext_arb,
+            btr_ext_data,
+        )
+
+    def serialize(self) -> bytes:
+        raw = bytearray(self.object_size)
+
+        # serialize fixed size values
+        self.FORMAT.pack_into(
+            raw,
+            0,
+            self.signature,
+            self.header_size,
+            self.header_version,
+            self.object_size,
+            self.object_type,
+            self.object_flags,
+            self.client_index,
+            self.object_version,
+            self.object_time_stamp,
+            self.channel,
+            self.dlc,
+            self.valid_data_bytes,
+            self.ecc,
+            self.flags,
+            self.error_code_ext,
+            self.ext_flags,
+            self.ext_data_offset,
+            self.reserved1,
+            self.frame_id,
+            self.frame_length,
+            self.btr_cfg_arb,
+            self.btr_cfg_data,
+            self.time_offset_brs_ns,
+            self.time_offset_crc_del_ns,
+            self.crc,
+            self.error_position,
+            self.reserved2,
+        )
+
+        # serialize data
+        raw[self.FORMAT.size : self.FORMAT.size + self.valid_data_bytes] = self.data
+
+        # serialize ext frame data
+        if self.object_size >= self.ext_data_offset + self.FORMAT_EXT.size:
+            self.FORMAT_EXT.pack_into(
+                raw, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data
+            )
+        return bytes(raw)

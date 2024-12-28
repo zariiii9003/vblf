@@ -2,6 +2,7 @@ from blf.can import (
     CanDriverError,
     CanDriverErrorExt,
     CanDriverStatistic,
+    CanFdErrorFrame64,
     CanFdMessage64,
     CanFdMessage64Flags,
 )
@@ -103,4 +104,40 @@ def test_can_driver_error_ext():
     assert obj.error_code == 1145324612
     assert obj.flags == 1431655765
     assert obj.state == 102
+    assert obj.serialize() == raw
+
+
+def test_canfd_error_frame64():
+    raw = (DATA_DIR / "CAN_FD_ERROR_64.lobj").read_bytes()
+    obj = CanFdErrorFrame64.deserialize(raw)
+    assert obj.signature == b"LOBJ"
+    assert obj.header_size == 32
+    assert obj.header_version == 1
+    assert obj.object_size == 152
+    assert obj.object_type == 104
+    assert obj.object_flags == 2
+    assert obj.client_index == 4369
+    assert obj.object_version == 0
+    assert obj.object_time_stamp == 2459565876494606882
+    assert obj.channel == 17
+    assert obj.dlc == 34
+    assert obj.valid_data_bytes == 64
+    assert obj.ecc == 68
+    assert obj.flags == 21845
+    assert obj.error_code_ext == 26214
+    assert obj.ext_flags == 30583
+    assert obj.ext_data_offset == 140
+    assert obj.reserved1 == 153
+    assert obj.frame_id == 2863311530
+    assert obj.frame_length == 3149642683
+    assert obj.btr_cfg_arb == 3435973836
+    assert obj.btr_cfg_data == 3722304989
+    assert obj.time_offset_brs_ns == 4008636142
+    assert obj.time_offset_crc_del_ns == 4294967295
+    assert obj.crc == 286331153
+    assert obj.error_position == 8738
+    assert obj.reserved2 == 13107
+    assert obj.data == bytes(range(64))
+    assert obj.btr_ext_arb == 286331153
+    assert obj.btr_ext_data == 572662306
     assert obj.serialize() == raw
