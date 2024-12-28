@@ -189,3 +189,88 @@ class CanDriverError(ObjectHeader):
 
     def serialize(self) -> bytes:
         return self.FORMAT.pack(*self.__dict__.values())
+
+
+@dataclass
+class CanDriverErrorExt(ObjectHeader):
+    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HBBIIBBH4I")
+    channel: int
+    tx_errors: int
+    rx_errors: int
+    error_code: int
+    flags: int
+    state: int
+    reserved1: int
+    reserved2: int
+    reserved3: list[int]
+
+    @classmethod
+    def deserialize(cls, data: bytes) -> "CanDriverErrorExt":
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            tx_errors,
+            rx_errors,
+            error_code,
+            flags,
+            state,
+            reserved1,
+            reserved2,
+            reserved3_0,
+            reserved3_1,
+            reserved3_2,
+            reserved3_3,
+        ) = cls.FORMAT.unpack(data)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+            channel,
+            tx_errors,
+            rx_errors,
+            error_code,
+            flags,
+            state,
+            reserved1,
+            reserved2,
+            [reserved3_0, reserved3_1, reserved3_2, reserved3_3],
+        )
+
+    def serialize(self) -> bytes:
+        return self.FORMAT.pack(
+            self.signature,
+            self.header_size,
+            self.header_version,
+            self.object_size,
+            self.object_type,
+            self.object_flags,
+            self.client_index,
+            self.object_version,
+            self.object_time_stamp,
+            self.channel,
+            self.tx_errors,
+            self.rx_errors,
+            self.error_code,
+            self.flags,
+            self.state,
+            self.reserved1,
+            self.reserved2,
+            self.reserved3[0],
+            self.reserved3[1],
+            self.reserved3[2],
+            self.reserved3[3],
+        )

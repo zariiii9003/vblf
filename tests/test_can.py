@@ -1,4 +1,10 @@
-from blf.can import CanDriverError, CanDriverStatistic, CanFdMessage64, CanFdMessage64Flags
+from blf.can import (
+    CanDriverError,
+    CanDriverErrorExt,
+    CanDriverStatistic,
+    CanFdMessage64,
+    CanFdMessage64Flags,
+)
 from tests import DATA_DIR
 
 
@@ -76,4 +82,25 @@ def test_can_driver_error():
     assert obj.tx_errors == 0
     assert obj.rx_errors == 0
     assert obj.error_code == 104
+    assert obj.serialize() == raw
+
+
+def test_can_driver_error_ext():
+    raw = (DATA_DIR / "CAN_DRIVER_ERROR_EXT.lobj").read_bytes()
+    obj = CanDriverErrorExt.deserialize(raw)
+    assert obj.signature == b"LOBJ"
+    assert obj.header_size == 32
+    assert obj.header_version == 1
+    assert obj.object_size == 64
+    assert obj.object_type == 74
+    assert obj.object_flags == 2
+    assert obj.client_index == 4369
+    assert obj.object_version == 0
+    assert obj.object_time_stamp == 2459565876494606882
+    assert obj.channel == 4369
+    assert obj.tx_errors == 34
+    assert obj.rx_errors == 51
+    assert obj.error_code == 1145324612
+    assert obj.flags == 1431655765
+    assert obj.state == 102
     assert obj.serialize() == raw
