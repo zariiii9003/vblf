@@ -1,6 +1,6 @@
 import struct
 from dataclasses import dataclass
-from typing import ClassVar, Final
+from typing import ClassVar
 
 from typing_extensions import Self
 
@@ -37,6 +37,7 @@ class SystemTime:
 @dataclass
 class ObjectHeaderBase:
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("4sHHII")
+    SIZE: ClassVar[int] = _FORMAT.size
     signature: bytes
     header_size: int
     header_version: int
@@ -83,13 +84,6 @@ class ObjectHeaderBase:
     def pack_into(self, buffer: bytearray, offset: int) -> None:
         self._FORMAT.pack_into(buffer, offset, *self.__dict__.values())
 
-    @classmethod
-    def calc_size(cls) -> int:
-        return cls._FORMAT.size
-
-
-OBJ_HEADER_BASE_SIZE: Final = ObjectHeaderBase.calc_size()
-
 
 @dataclass
 class HeaderWithBase:
@@ -126,7 +120,7 @@ class VarObjectHeader(HeaderWithBase):
             object_static_size,
             object_version,
             object_time_stamp,
-        ) = cls._FORMAT.unpack_from(buffer, OBJ_HEADER_BASE_SIZE)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeaderBase.SIZE)
         return cls(
             base,
             ObjFlags(object_flags),
@@ -143,7 +137,7 @@ class VarObjectHeader(HeaderWithBase):
             object_static_size,
             object_version,
             object_time_stamp,
-        ) = cls._FORMAT.unpack_from(buffer, offset + OBJ_HEADER_BASE_SIZE)
+        ) = cls._FORMAT.unpack_from(buffer, offset + ObjectHeaderBase.SIZE)
         return cls(
             base,
             ObjFlags(object_flags),
@@ -164,7 +158,7 @@ class VarObjectHeader(HeaderWithBase):
         self.base.pack_into(buffer, offset)
         self._FORMAT.pack_into(
             buffer,
-            offset + OBJ_HEADER_BASE_SIZE,
+            offset + ObjectHeaderBase.SIZE,
             self.object_flags,
             self.object_static_size,
             self.object_version,
@@ -188,7 +182,7 @@ class ObjectHeader(HeaderWithBase):
             client_index,
             object_version,
             object_time_stamp,
-        ) = cls._FORMAT.unpack_from(buffer, OBJ_HEADER_BASE_SIZE)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeaderBase.SIZE)
         return cls(
             base,
             ObjFlags(object_flags),
@@ -205,7 +199,7 @@ class ObjectHeader(HeaderWithBase):
             client_index,
             object_version,
             object_time_stamp,
-        ) = cls._FORMAT.unpack_from(buffer, offset + OBJ_HEADER_BASE_SIZE)
+        ) = cls._FORMAT.unpack_from(buffer, offset + ObjectHeaderBase.SIZE)
         return cls(
             base,
             ObjFlags(object_flags),
@@ -226,7 +220,7 @@ class ObjectHeader(HeaderWithBase):
         self.base.pack_into(buffer, offset)
         self._FORMAT.pack_into(
             buffer,
-            offset + OBJ_HEADER_BASE_SIZE,
+            offset + ObjectHeaderBase.SIZE,
             self.object_flags,
             self.client_index,
             self.object_version,
@@ -260,6 +254,7 @@ class ObjectWithHeader:
 @dataclass
 class FileStatistics:
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("4sIIBBBBQQII32xQ64s")
+    SIZE: ClassVar[int] = _FORMAT.size
     signature: bytes
     statistics_size: int
     api_number: int

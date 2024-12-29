@@ -23,7 +23,6 @@ from blf.can import (
 )
 from blf.constants import OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjTypeEnum
 from blf.general import (
-    OBJ_HEADER_BASE_SIZE,
     AppText,
     AppTrigger,
     EnvironmentVariable,
@@ -34,8 +33,6 @@ from blf.general import (
 )
 
 LOG = logging.getLogger("blf")
-
-_FILE_STATISTICS_SIZE: Final = FileStatistics.calc_size()
 
 
 class BlfReader(AbstractContextManager):
@@ -51,12 +48,12 @@ class BlfReader(AbstractContextManager):
             err_msg = "Unsupported type {type(file)}"
             raise TypeError(err_msg)
 
-        obj_data = self._file.read(_FILE_STATISTICS_SIZE)
-        if len(obj_data) < _FILE_STATISTICS_SIZE or not obj_data.startswith(b"LOGG"):
+        obj_data = self._file.read(FileStatistics.SIZE)
+        if len(obj_data) < FileStatistics.SIZE or not obj_data.startswith(b"LOGG"):
             err_msg = "Unexpected file format"
             raise ValueError(err_msg)
 
-        self.file_statistics = FileStatistics.unpack(self._file.read(_FILE_STATISTICS_SIZE))
+        self.file_statistics = FileStatistics.unpack(self._file.read(FileStatistics.SIZE))
 
         self._incomplete_data: bytes = b""
         self._generator = self._generate_objects(self._file)
@@ -72,15 +69,15 @@ class BlfReader(AbstractContextManager):
                 stream.seek(1 - OBJ_SIGNATURE_SIZE, os.SEEK_CUR)
                 continue
 
-            header_base_data = signature + stream.read(OBJ_HEADER_BASE_SIZE - OBJ_SIGNATURE_SIZE)
-            if len(header_base_data) < OBJ_HEADER_BASE_SIZE:
+            header_base_data = signature + stream.read(ObjectHeaderBase.SIZE - OBJ_SIGNATURE_SIZE)
+            if len(header_base_data) < ObjectHeaderBase.SIZE:
                 self._incomplete_data = header_base_data
                 break
 
             # read object data
             header_base = ObjectHeaderBase.unpack(header_base_data)
             obj_data = header_base_data + stream.read(
-                header_base.object_size - OBJ_HEADER_BASE_SIZE
+                header_base.object_size - ObjectHeaderBase.SIZE
             )
             if len(obj_data) < header_base.object_size:
                 self._incomplete_data = obj_data
