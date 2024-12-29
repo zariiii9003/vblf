@@ -24,6 +24,7 @@ from blf.can import (
 from blf.constants import OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjTypeEnum
 from blf.general import (
     AppText,
+    AppTrigger,
     FileStatistics,
     LogContainer,
     ObjectHeaderBase,
@@ -134,7 +135,7 @@ OBJ_MAP: Final[dict[int, Optional[type[ObjectWithHeader]]]] = {
     ObjTypeEnum.CAN_ERROR.value: CanErrorFrame,
     ObjTypeEnum.CAN_OVERLOAD.value: CanOverloadFrame,
     ObjTypeEnum.CAN_STATISTIC.value: CanDriverStatistic,
-    ObjTypeEnum.APP_TRIGGER.value: None,
+    ObjTypeEnum.APP_TRIGGER.value: AppTrigger,
     ObjTypeEnum.ENV_INTEGER.value: None,
     ObjTypeEnum.ENV_DOUBLE.value: None,
     ObjTypeEnum.ENV_STRING.value: None,

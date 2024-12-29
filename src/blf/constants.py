@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import IntEnum, IntFlag
 from typing import Final
 
 OBJ_SIGNATURE: Final = b"LOBJ"
@@ -135,3 +135,9 @@ class ObjTypeEnum(IntEnum):
     DATA_LOST_END = 126
     WATER_MARK_EVENT = 127
     TRIGGER_CONDITION = 128
+
+
+class TriggerFlag(IntFlag):
+    SINGLE_TRIGGER = 0x0
+    LOGGING_START = 0x1
+    LOGGING_STOP = 0x2

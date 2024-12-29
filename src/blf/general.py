@@ -4,6 +4,8 @@ from typing import ClassVar
 
 from typing_extensions import Self
 
+from blf.constants import TriggerFlag
+
 
 @dataclass
 class SystemTime:
@@ -244,3 +246,42 @@ class AppText(ObjectWithHeader):
         text_offset = self.header.header_size + self._FORMAT.size
         buffer[text_offset : text_offset + self.text_length] = encoded_text
         return bytes(buffer)
+
+
+@dataclass
+class AppTrigger(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("QQHHI")
+    header: ObjectHeader
+    pre_trigger_time: int
+    post_trigger_time: int
+    channel: int
+    flags: TriggerFlag
+    app_specific: int
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer, 0)
+        (
+            pre_trigger_time,
+            post_trigger_time,
+            channel,
+            flags,
+            app_specific,
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
+        return cls(
+            header,
+            pre_trigger_time,
+            post_trigger_time,
+            channel,
+            TriggerFlag(flags),
+            app_specific,
+        )
+
+    def pack(self) -> bytes:
+        return self.header.pack() + self._FORMAT.pack(
+            self.pre_trigger_time,
+            self.post_trigger_time,
+            self.channel,
+            self.flags,
+            self.app_specific,
+        )

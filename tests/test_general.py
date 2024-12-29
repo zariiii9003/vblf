@@ -1,4 +1,5 @@
-from blf.general import AppText, FileStatistics
+from blf.constants import TriggerFlag
+from blf.general import AppText, AppTrigger, FileStatistics
 from tests import DATA_DIR
 
 
@@ -51,4 +52,24 @@ def test_app_text():
     assert obj.text_length == 49
     assert obj.reserved2 == 0
     assert obj.text == "C:\\Users\\user\\Desktop\\project car\\myDatabase.dbc"
+    assert obj.pack() == raw
+
+
+def test_app_trigger():
+    raw = (DATA_DIR / "APP_TRIGGER.lobj").read_bytes()
+    obj = AppTrigger.unpack(raw)
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 56
+    assert obj.header.object_type == 5
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.pre_trigger_time == 1229782938247303441
+    assert obj.post_trigger_time == 2459565876494606882
+    assert obj.channel == 13107
+    assert obj.flags == TriggerFlag.SINGLE_TRIGGER
+    assert obj.app_specific == 1145324612
     assert obj.pack() == raw
