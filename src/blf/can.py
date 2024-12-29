@@ -454,6 +454,24 @@ class CanDriverErrorExt(ObjectWithHeader):
 
 
 @dataclass
+class CanErrorFrame(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HHI")
+    header: ObjectHeader
+    channel: int
+    length: int
+    reserved: int
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
+        channel, length, reserved = cls._FORMAT.unpack_from(buffer, header.header_size)
+        return cls(header, channel, length, reserved)
+
+    def pack(self) -> bytes:
+        return self.header.pack() + self._FORMAT.pack(self.channel, self.length, self.reserved)
+
+
+@dataclass
 class CanFdErrorFrame64(ObjectWithHeader):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("BBBBHHHBBIIIIIIIHH")
     _FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")

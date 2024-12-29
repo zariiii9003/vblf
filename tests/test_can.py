@@ -2,6 +2,7 @@ from blf.can import (
     CanDriverError,
     CanDriverErrorExt,
     CanDriverStatistic,
+    CanErrorFrame,
     CanFdErrorFrame64,
     CanFdMessage,
     CanFdMessage64,
@@ -177,6 +178,24 @@ def test_can_driver_error_ext():
     assert obj.error_code == 1145324612
     assert obj.flags == 1431655765
     assert obj.state == 102
+    assert obj.pack() == raw
+
+
+def test_can_error_frame():
+    raw = (DATA_DIR / "CAN_ERROR.lobj").read_bytes()
+    obj = CanErrorFrame.unpack(raw)
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 40
+    assert obj.header.object_type == 2
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.channel == 4369
+    assert obj.length == 8738
+    assert obj.reserved == 0
     assert obj.pack() == raw
 
 
