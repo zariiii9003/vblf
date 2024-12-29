@@ -5,7 +5,7 @@ from collections.abc import Iterator
 from contextlib import AbstractContextManager
 from io import BytesIO
 from types import TracebackType
-from typing import BinaryIO, Final, Optional, Union
+from typing import Any, BinaryIO, Final, Optional, Union
 
 from blf.can import (
     CanDriverError,
@@ -35,8 +35,8 @@ from blf.general import (
 LOG = logging.getLogger("blf")
 
 
-class BlfReader(AbstractContextManager):
-    def __init__(self, file: Union[str, bytes, os.PathLike, BinaryIO]):
+class BlfReader(AbstractContextManager["BlfReader"]):
+    def __init__(self, file: Union[str, bytes, os.PathLike[Any], BinaryIO]):
         self._file: BinaryIO
         if isinstance(file, (str, bytes, os.PathLike)):
             self._file = open(file, "rb")  # noqa: SIM115
