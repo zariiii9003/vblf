@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from typing_extensions import Self
 
-from blf.constants import ObjTypeEnum, TriggerFlag
+from blf.constants import ObjFlags, ObjTypeEnum, TriggerFlag
 
 
 @dataclass
@@ -43,50 +43,13 @@ class ObjectHeaderBase:
     object_size: int
     object_type: ObjTypeEnum
 
-    @staticmethod
-    def _obj_type(object_type: int) -> ObjTypeEnum:
-        try:
-            return ObjTypeEnum(object_type)
-        except ValueError:
-            return ObjTypeEnum.UNKNOWN
-
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
-        (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            *subclass_attrs,
-        ) = cls._FORMAT.unpack(buffer)
-        return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            cls._obj_type(object_type),
-            *subclass_attrs,
-        )
+        raise NotImplementedError
 
     @classmethod
     def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
-        (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            *subclass_attrs,
-        ) = cls._FORMAT.unpack_from(buffer, offset)
-        return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            cls._obj_type(object_type),
-            *subclass_attrs,
-        )
+        raise NotImplementedError
 
     def pack(self) -> bytes:
         return self._FORMAT.pack(*self.__dict__.values())
@@ -107,6 +70,56 @@ class VarObjectHeader(ObjectHeaderBase):
     object_version: int
     object_time_stamp: int
 
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            object_static_size,
+            object_version,
+            object_time_stamp,
+        ) = cls._FORMAT.unpack(buffer)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            ObjTypeEnum.from_int(object_type),
+            ObjFlags(object_flags),
+            object_static_size,
+            object_version,
+            object_time_stamp,
+        )
+
+    @classmethod
+    def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            object_static_size,
+            object_version,
+            object_time_stamp,
+        ) = cls._FORMAT.unpack_from(buffer, offset)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            ObjTypeEnum.from_int(object_type),
+            ObjFlags(object_flags),
+            object_static_size,
+            object_version,
+            object_time_stamp,
+        )
+
 
 @dataclass
 class ObjectHeader(ObjectHeaderBase):
@@ -115,6 +128,56 @@ class ObjectHeader(ObjectHeaderBase):
     client_index: int
     object_version: int
     object_time_stamp: int
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+        ) = cls._FORMAT.unpack(buffer)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            ObjTypeEnum.from_int(object_type),
+            ObjFlags(object_flags),
+            client_index,
+            object_version,
+            object_time_stamp,
+        )
+
+    @classmethod
+    def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            object_flags,
+            client_index,
+            object_version,
+            object_time_stamp,
+        ) = cls._FORMAT.unpack_from(buffer, offset)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            ObjTypeEnum.from_int(object_type),
+            ObjFlags(object_flags),
+            client_index,
+            object_version,
+            object_time_stamp,
+        )
 
 
 # @dataclass

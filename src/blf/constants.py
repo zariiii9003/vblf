@@ -136,6 +136,18 @@ class ObjTypeEnum(IntEnum):
     WATER_MARK_EVENT = 127
     TRIGGER_CONDITION = 128
 
+    @staticmethod
+    def from_int(object_type: int) -> "ObjTypeEnum":
+        try:
+            return ObjTypeEnum(object_type)
+        except ValueError:
+            return ObjTypeEnum.UNKNOWN
+
+
+class ObjFlags(IntFlag):
+    TIME_TEN_MICS = 0x1
+    TIME_ONE_NANS = 0x2
+
 
 class TriggerFlag(IntFlag):
     SINGLE_TRIGGER = 0x0
