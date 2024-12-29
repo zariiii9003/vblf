@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from typing_extensions import Self
 
-from blf.constants import TriggerFlag
+from blf.constants import ObjTypeEnum, TriggerFlag
 
 
 @dataclass
@@ -41,18 +41,55 @@ class ObjectHeaderBase:
     header_size: int
     header_version: int
     object_size: int
-    object_type: int
+    object_type: ObjTypeEnum
+
+    @staticmethod
+    def _obj_type(object_type: int) -> ObjTypeEnum:
+        try:
+            return ObjTypeEnum(object_type)
+        except ValueError:
+            return ObjTypeEnum.UNKNOWN
 
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
-        return cls(*cls._FORMAT.unpack(buffer))
-
-    def pack(self) -> bytes:
-        return self._FORMAT.pack(*self.__dict__.values())
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            *subclass_attrs,
+        ) = cls._FORMAT.unpack(buffer)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            cls._obj_type(object_type),
+            *subclass_attrs,
+        )
 
     @classmethod
     def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
-        return cls(*cls._FORMAT.unpack_from(buffer, offset))
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+            *subclass_attrs,
+        ) = cls._FORMAT.unpack_from(buffer, offset)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            cls._obj_type(object_type),
+            *subclass_attrs,
+        )
+
+    def pack(self) -> bytes:
+        return self._FORMAT.pack(*self.__dict__.values())
 
     def pack_into(self, buffer: bytearray, offset: int) -> None:
         return self._FORMAT.pack_into(buffer, offset, *self.__dict__.values())

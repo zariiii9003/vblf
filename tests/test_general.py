@@ -1,4 +1,4 @@
-from blf.constants import TriggerFlag
+from blf.constants import ObjTypeEnum, TriggerFlag
 from blf.general import AppText, AppTrigger, EnvironmentVariable, FileStatistics
 from tests import DATA_DIR
 
@@ -42,7 +42,7 @@ def test_app_text():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 97
-    assert obj.header.object_type == 65
+    assert obj.header.object_type is ObjTypeEnum.APP_TEXT
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -62,7 +62,7 @@ def test_app_trigger():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 56
-    assert obj.header.object_type == 5
+    assert obj.header.object_type is ObjTypeEnum.APP_TRIGGER
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -82,7 +82,7 @@ def test_environment_variable_integer():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 55
-    assert obj.header.object_type == 6
+    assert obj.header.object_type is ObjTypeEnum.ENV_INTEGER
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -102,7 +102,7 @@ def test_environment_variable_double():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 59
-    assert obj.header.object_type == 7
+    assert obj.header.object_type is ObjTypeEnum.ENV_DOUBLE
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -122,7 +122,7 @@ def test_environment_variable_string():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 54
-    assert obj.header.object_type == 8
+    assert obj.header.object_type is ObjTypeEnum.ENV_STRING
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -142,7 +142,7 @@ def test_environment_variable_data():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 54
-    assert obj.header.object_type == 9
+    assert obj.header.object_type is ObjTypeEnum.ENV_DATA
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0

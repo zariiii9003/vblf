@@ -13,6 +13,7 @@ from blf.can import (
     CanMessage2,
     CanOverloadFrame,
 )
+from blf.constants import ObjTypeEnum
 from tests import DATA_DIR
 
 
@@ -23,7 +24,7 @@ def test_can_message():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 48
-    assert obj.header.object_type == 1
+    assert obj.header.object_type is ObjTypeEnum.CAN_MESSAGE
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -43,7 +44,7 @@ def test_can_message2():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 56
-    assert obj.header.object_type == 86
+    assert obj.header.object_type is ObjTypeEnum.CAN_MESSAGE2
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -67,7 +68,7 @@ def test_canfd_message():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 120
-    assert obj.header.object_type == 100
+    assert obj.header.object_type is ObjTypeEnum.CAN_FD_MESSAGE
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -93,7 +94,7 @@ def test_canfd_message64():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 88
-    assert obj.header.object_type == 101
+    assert obj.header.object_type is ObjTypeEnum.CAN_FD_MESSAGE_64
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -127,7 +128,7 @@ def test_can_driver_statistic():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 64
-    assert obj.header.object_type == 4
+    assert obj.header.object_type is ObjTypeEnum.CAN_STATISTIC
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -151,7 +152,7 @@ def test_can_driver_error():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 40
-    assert obj.header.object_type == 31
+    assert obj.header.object_type is ObjTypeEnum.CAN_DRIVER_ERROR
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -170,7 +171,7 @@ def test_can_driver_error_ext():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 64
-    assert obj.header.object_type == 74
+    assert obj.header.object_type is ObjTypeEnum.CAN_DRIVER_ERROR_EXT
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -191,7 +192,7 @@ def test_can_error_frame():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 40
-    assert obj.header.object_type == 2
+    assert obj.header.object_type is ObjTypeEnum.CAN_ERROR
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -209,7 +210,7 @@ def test_can_error_frame_ext():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 64
-    assert obj.header.object_type == 73
+    assert obj.header.object_type is ObjTypeEnum.CAN_ERROR_EXT
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -236,7 +237,7 @@ def test_canfd_error_frame64():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 152
-    assert obj.header.object_type == 104
+    assert obj.header.object_type is ObjTypeEnum.CAN_FD_ERROR_64
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -272,7 +273,7 @@ def test_can_driver_hw_sync():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 40
-    assert obj.header.object_type == 44
+    assert obj.header.object_type is ObjTypeEnum.CAN_DRIVER_SYNC
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -291,7 +292,7 @@ def test_can_overload_frame():
     assert obj.header.header_size == 32
     assert obj.header.header_version == 1
     assert obj.header.object_size == 40
-    assert obj.header.object_type == 3
+    assert obj.header.object_type is ObjTypeEnum.CAN_OVERLOAD
     assert obj.header.object_flags == 2
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0

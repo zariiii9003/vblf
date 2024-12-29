@@ -88,12 +88,7 @@ class BlfReader(AbstractContextManager):
             # interpret object data
             obj_class = OBJ_MAP.get(header_base.object_type)
             if not obj_class:
-                try:
-                    object_type = ObjTypeEnum(header_base.object_type).name
-                except ValueError:
-                    object_type = str(header_base.object_type)
-
-                LOG.info("BLF object type '%s' is not implemented.", object_type)
+                LOG.info("BLF object type '%s' is not implemented.", header_base.object_type)
                 continue
 
             if obj_class is LogContainer:
