@@ -1,5 +1,5 @@
 from blf.constants import TriggerFlag
-from blf.general import AppText, AppTrigger, FileStatistics
+from blf.general import AppText, AppTrigger, EnvironmentVariable, FileStatistics
 from tests import DATA_DIR
 
 
@@ -72,4 +72,84 @@ def test_app_trigger():
     assert obj.channel == 13107
     assert obj.flags == TriggerFlag.SINGLE_TRIGGER
     assert obj.app_specific == 1145324612
+    assert obj.pack() == raw
+
+
+def test_environment_variable_integer():
+    raw = (DATA_DIR / "ENV_INTEGER.lobj").read_bytes()
+    obj = EnvironmentVariable.unpack(raw)
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 55
+    assert obj.header.object_type == 6
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.name_length == 3
+    assert obj.data_length == 4
+    assert obj.reserved == 0
+    assert obj.name == "xyz"
+    assert obj.data == b"\x11\x11\x11\x11"
+    assert obj.pack() == raw
+
+
+def test_environment_variable_double():
+    raw = (DATA_DIR / "ENV_DOUBLE.lobj").read_bytes()
+    obj = EnvironmentVariable.unpack(raw)
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 59
+    assert obj.header.object_type == 7
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.name_length == 3
+    assert obj.data_length == 8
+    assert obj.reserved == 0
+    assert obj.name == "xyz"
+    assert obj.data == b"\x00\x00\x00\x00\x00\x00\x00\x40"
+    assert obj.pack() == raw
+
+
+def test_environment_variable_string():
+    raw = (DATA_DIR / "ENV_STRING.lobj").read_bytes()
+    obj = EnvironmentVariable.unpack(raw)
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 54
+    assert obj.header.object_type == 8
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.name_length == 3
+    assert obj.data_length == 3
+    assert obj.reserved == 0
+    assert obj.name == "xyz"
+    assert obj.data == b"xyz"
+    assert obj.pack() == raw
+
+
+def test_environment_variable_data():
+    raw = (DATA_DIR / "ENV_DATA.lobj").read_bytes()
+    obj = EnvironmentVariable.unpack(raw)
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 54
+    assert obj.header.object_type == 9
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.name_length == 3
+    assert obj.data_length == 3
+    assert obj.reserved == 0
+    assert obj.name == "xyz"
+    assert obj.data == b"\x01\x02\x03"
     assert obj.pack() == raw

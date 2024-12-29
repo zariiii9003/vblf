@@ -285,3 +285,61 @@ class AppTrigger(ObjectWithHeader):
             self.flags,
             self.app_specific,
         )
+
+
+@dataclass
+class EnvironmentVariable(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIQ")
+    header: ObjectHeader
+    name_length: int
+    data_length: int
+    reserved: int
+    name: str
+    data: bytes
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer, 0)
+        (name_length, data_length, reserved) = cls._FORMAT.unpack_from(buffer, header.header_size)
+
+        # get name
+        name_offset = header.header_size + cls._FORMAT.size
+        name = buffer[name_offset : name_offset + name_length].decode("mbcs")
+
+        # get data
+        data_offset = name_offset + name_length
+        data = buffer[data_offset : data_offset + data_length]
+
+        return cls(
+            header,
+            name_length,
+            data_length,
+            reserved,
+            name,
+            data,
+        )
+
+    def pack(self) -> bytes:
+        buffer = bytearray(self.header.object_size)
+
+        # write header
+        self.header.pack_into(buffer, 0)
+
+        # write fixed size values
+        self._FORMAT.pack_into(
+            buffer,
+            self.header.header_size,
+            self.name_length,
+            self.data_length,
+            self.reserved,
+        )
+
+        # write name
+        name_offset = self.header.header_size + self._FORMAT.size
+        buffer[name_offset : name_offset + self.name_length] = self.name.encode("mbcs")
+
+        # write data
+        data_offset = name_offset + self.name_length
+        buffer[data_offset : data_offset + self.data_length] = self.data
+
+        return bytes(buffer)
