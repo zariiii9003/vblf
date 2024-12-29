@@ -1,6 +1,6 @@
 import struct
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import ClassVar, Final
 
 from typing_extensions import Self
 
@@ -81,16 +81,38 @@ class ObjectHeaderBase:
         return self._FORMAT.pack(*self.__dict__.values())
 
     def pack_into(self, buffer: bytearray, offset: int) -> None:
-        return self._FORMAT.pack_into(buffer, offset, *self.__dict__.values())
+        self._FORMAT.pack_into(buffer, offset, *self.__dict__.values())
 
     @classmethod
     def calc_size(cls) -> int:
         return cls._FORMAT.size
 
 
+OBJ_HEADER_BASE_SIZE: Final = ObjectHeaderBase.calc_size()
+
+
 @dataclass
-class VarObjectHeader(ObjectHeaderBase):
-    _FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeaderBase._FORMAT.format + "IHHQ")
+class HeaderWithBase:
+    base: ObjectHeaderBase
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        raise NotImplementedError
+
+    @classmethod
+    def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
+        raise NotImplementedError
+
+    def pack(self) -> bytes:
+        raise NotImplementedError
+
+    def pack_into(self, buffer: bytearray, offset: int) -> None:
+        raise NotImplementedError
+
+
+@dataclass
+class VarObjectHeader(HeaderWithBase):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("IHHQ")
     object_flags: int
     object_static_size: int
     object_version: int
@@ -98,23 +120,15 @@ class VarObjectHeader(ObjectHeaderBase):
 
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
+        base = ObjectHeaderBase.unpack_from(buffer, 0)
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
             object_flags,
             object_static_size,
             object_version,
             object_time_stamp,
-        ) = cls._FORMAT.unpack(buffer)
+        ) = cls._FORMAT.unpack_from(buffer, OBJ_HEADER_BASE_SIZE)
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            ObjTypeEnum.from_int(object_type),
+            base,
             ObjFlags(object_flags),
             object_static_size,
             object_version,
@@ -123,33 +137,44 @@ class VarObjectHeader(ObjectHeaderBase):
 
     @classmethod
     def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
+        base = ObjectHeaderBase.unpack_from(buffer, 0)
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
             object_flags,
             object_static_size,
             object_version,
             object_time_stamp,
-        ) = cls._FORMAT.unpack_from(buffer, offset)
+        ) = cls._FORMAT.unpack_from(buffer, offset + OBJ_HEADER_BASE_SIZE)
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            ObjTypeEnum.from_int(object_type),
+            base,
             ObjFlags(object_flags),
             object_static_size,
             object_version,
             object_time_stamp,
         )
 
+    def pack(self) -> bytes:
+        return self.base.pack() + self._FORMAT.pack(
+            self.object_flags,
+            self.object_static_size,
+            self.object_version,
+            self.object_time_stamp,
+        )
+
+    def pack_into(self, buffer: bytearray, offset: int) -> None:
+        self.base.pack_into(buffer, offset)
+        self._FORMAT.pack_into(
+            buffer,
+            offset + OBJ_HEADER_BASE_SIZE,
+            self.object_flags,
+            self.object_static_size,
+            self.object_version,
+            self.object_time_stamp,
+        )
+
 
 @dataclass
-class ObjectHeader(ObjectHeaderBase):
-    _FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeaderBase._FORMAT.format + "IHHQ")
+class ObjectHeader(HeaderWithBase):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("IHHQ")
     object_flags: int
     client_index: int
     object_version: int
@@ -157,23 +182,15 @@ class ObjectHeader(ObjectHeaderBase):
 
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
+        base = ObjectHeaderBase.unpack_from(buffer, 0)
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
             object_flags,
             client_index,
             object_version,
             object_time_stamp,
-        ) = cls._FORMAT.unpack(buffer)
+        ) = cls._FORMAT.unpack_from(buffer, OBJ_HEADER_BASE_SIZE)
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            ObjTypeEnum.from_int(object_type),
+            base,
             ObjFlags(object_flags),
             client_index,
             object_version,
@@ -182,27 +199,38 @@ class ObjectHeader(ObjectHeaderBase):
 
     @classmethod
     def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
+        base = ObjectHeaderBase.unpack_from(buffer, offset)
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
             object_flags,
             client_index,
             object_version,
             object_time_stamp,
-        ) = cls._FORMAT.unpack_from(buffer, offset)
+        ) = cls._FORMAT.unpack_from(buffer, offset + OBJ_HEADER_BASE_SIZE)
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            ObjTypeEnum.from_int(object_type),
+            base,
             ObjFlags(object_flags),
             client_index,
             object_version,
             object_time_stamp,
+        )
+
+    def pack(self) -> bytes:
+        return self.base.pack() + self._FORMAT.pack(
+            self.object_flags,
+            self.client_index,
+            self.object_version,
+            self.object_time_stamp,
+        )
+
+    def pack_into(self, buffer: bytearray, offset: int) -> None:
+        self.base.pack_into(buffer, offset)
+        self._FORMAT.pack_into(
+            buffer,
+            offset + OBJ_HEADER_BASE_SIZE,
+            self.object_flags,
+            self.client_index,
+            self.object_version,
+            self.object_time_stamp,
         )
 
 
@@ -219,7 +247,7 @@ class ObjectHeader(ObjectHeaderBase):
 
 @dataclass
 class ObjectWithHeader:
-    header: ObjectHeaderBase
+    header: HeaderWithBase
 
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
@@ -321,7 +349,7 @@ class LogContainer(ObjectWithHeader):
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
         header = ObjectHeader.unpack_from(buffer)
-        return cls(header, buffer[header.header_size :])
+        return cls(header, buffer[header.base.header_size :])
 
     def pack(self) -> bytes:
         return self.header.pack() + self.data
@@ -345,8 +373,8 @@ class AppText(ObjectWithHeader):
             reserved1,
             text_length,
             reserved2,
-        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
-        text_offset = header.header_size + cls._FORMAT.size
+        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        text_offset = header.base.header_size + cls._FORMAT.size
         text = buffer[text_offset : text_offset + text_length - 1].decode("mbcs")
         return cls(
             header,
@@ -358,18 +386,18 @@ class AppText(ObjectWithHeader):
         )
 
     def pack(self) -> bytes:
-        buffer = bytearray(self.header.object_size)
+        buffer = bytearray(self.header.base.object_size)
         self.header.pack_into(buffer, 0)
         self._FORMAT.pack_into(
             buffer,
-            self.header.header_size,
+            self.header.base.header_size,
             self.source,
             self.reserved1,
             self.text_length,
             self.reserved2,
         )
         encoded_text = self.text.encode("mbcs") + b"\x00"
-        text_offset = self.header.header_size + self._FORMAT.size
+        text_offset = self.header.base.header_size + self._FORMAT.size
         buffer[text_offset : text_offset + self.text_length] = encoded_text
         return bytes(buffer)
 
@@ -393,7 +421,7 @@ class AppTrigger(ObjectWithHeader):
             channel,
             flags,
             app_specific,
-        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
         return cls(
             header,
             pre_trigger_time,
@@ -426,10 +454,12 @@ class EnvironmentVariable(ObjectWithHeader):
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
         header = ObjectHeader.unpack_from(buffer, 0)
-        (name_length, data_length, reserved) = cls._FORMAT.unpack_from(buffer, header.header_size)
+        (name_length, data_length, reserved) = cls._FORMAT.unpack_from(
+            buffer, header.base.header_size
+        )
 
         # get name
-        name_offset = header.header_size + cls._FORMAT.size
+        name_offset = header.base.header_size + cls._FORMAT.size
         name = buffer[name_offset : name_offset + name_length].decode("mbcs")
 
         # get data
@@ -446,7 +476,7 @@ class EnvironmentVariable(ObjectWithHeader):
         )
 
     def pack(self) -> bytes:
-        buffer = bytearray(self.header.object_size)
+        buffer = bytearray(self.header.base.object_size)
 
         # write header
         self.header.pack_into(buffer, 0)
@@ -454,14 +484,14 @@ class EnvironmentVariable(ObjectWithHeader):
         # write fixed size values
         self._FORMAT.pack_into(
             buffer,
-            self.header.header_size,
+            self.header.base.header_size,
             self.name_length,
             self.data_length,
             self.reserved,
         )
 
         # write name
-        name_offset = self.header.header_size + self._FORMAT.size
+        name_offset = self.header.base.header_size + self._FORMAT.size
         buffer[name_offset : name_offset + self.name_length] = self.name.encode("mbcs")
 
         # write data

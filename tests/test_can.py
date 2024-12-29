@@ -20,11 +20,11 @@ from tests import DATA_DIR
 def test_can_message():
     raw = (DATA_DIR / "CAN_MESSAGE.lobj").read_bytes()
     obj = CanMessage.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 48
-    assert obj.header.object_type is ObjTypeEnum.CAN_MESSAGE
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 48
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_MESSAGE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -40,11 +40,11 @@ def test_can_message():
 def test_can_message2():
     raw = (DATA_DIR / "CAN_MESSAGE2.lobj").read_bytes()
     obj = CanMessage2.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 56
-    assert obj.header.object_type is ObjTypeEnum.CAN_MESSAGE2
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 56
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_MESSAGE2
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -64,11 +64,11 @@ def test_can_message2():
 def test_canfd_message():
     raw = (DATA_DIR / "CAN_FD_MESSAGE.lobj").read_bytes()
     obj = CanFdMessage.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 120
-    assert obj.header.object_type is ObjTypeEnum.CAN_FD_MESSAGE
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 120
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_MESSAGE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -90,11 +90,11 @@ def test_canfd_message():
 def test_canfd_message64():
     raw = (DATA_DIR / "CAN_FD_MESSAGE_64.lobj").read_bytes()
     obj = CanFdMessage64.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 88
-    assert obj.header.object_type is ObjTypeEnum.CAN_FD_MESSAGE_64
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 88
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_MESSAGE_64
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -124,11 +124,11 @@ def test_canfd_message64():
 def test_can_driver_statistic():
     raw = (DATA_DIR / "CAN_STATISTIC.lobj").read_bytes()
     obj = CanDriverStatistic.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 64
-    assert obj.header.object_type is ObjTypeEnum.CAN_STATISTIC
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 64
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_STATISTIC
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -148,11 +148,11 @@ def test_can_driver_statistic():
 def test_can_driver_error():
     raw = (DATA_DIR / "CAN_DRIVER_ERROR.lobj").read_bytes()
     obj = CanDriverError.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 40
-    assert obj.header.object_type is ObjTypeEnum.CAN_DRIVER_ERROR
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 40
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_ERROR
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -167,11 +167,11 @@ def test_can_driver_error():
 def test_can_driver_error_ext():
     raw = (DATA_DIR / "CAN_DRIVER_ERROR_EXT.lobj").read_bytes()
     obj = CanDriverErrorExt.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 64
-    assert obj.header.object_type is ObjTypeEnum.CAN_DRIVER_ERROR_EXT
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 64
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_ERROR_EXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -188,11 +188,11 @@ def test_can_driver_error_ext():
 def test_can_error_frame():
     raw = (DATA_DIR / "CAN_ERROR.lobj").read_bytes()
     obj = CanErrorFrame.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 40
-    assert obj.header.object_type is ObjTypeEnum.CAN_ERROR
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 40
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_ERROR
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -206,11 +206,11 @@ def test_can_error_frame():
 def test_can_error_frame_ext():
     raw = (DATA_DIR / "CAN_ERROR_EXT.lobj").read_bytes()
     obj = CanErrorFrameExt.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 64
-    assert obj.header.object_type is ObjTypeEnum.CAN_ERROR_EXT
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 64
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_ERROR_EXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -233,11 +233,11 @@ def test_can_error_frame_ext():
 def test_canfd_error_frame64():
     raw = (DATA_DIR / "CAN_FD_ERROR_64.lobj").read_bytes()
     obj = CanFdErrorFrame64.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 152
-    assert obj.header.object_type is ObjTypeEnum.CAN_FD_ERROR_64
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 152
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_ERROR_64
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -269,11 +269,11 @@ def test_canfd_error_frame64():
 def test_can_driver_hw_sync():
     raw = (DATA_DIR / "CAN_DRIVER_SYNC.lobj").read_bytes()
     obj = CanDriverHwSync.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 40
-    assert obj.header.object_type is ObjTypeEnum.CAN_DRIVER_SYNC
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 40
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_SYNC
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -288,11 +288,11 @@ def test_can_driver_hw_sync():
 def test_can_overload_frame():
     raw = (DATA_DIR / "CAN_OVERLOAD.lobj").read_bytes()
     obj = CanOverloadFrame.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 40
-    assert obj.header.object_type is ObjTypeEnum.CAN_OVERLOAD
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 40
+    assert obj.header.base.object_type is ObjTypeEnum.CAN_OVERLOAD
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0

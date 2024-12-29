@@ -23,6 +23,7 @@ from blf.can import (
 )
 from blf.constants import OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjTypeEnum
 from blf.general import (
+    OBJ_HEADER_BASE_SIZE,
     AppText,
     AppTrigger,
     EnvironmentVariable,
@@ -33,7 +34,7 @@ from blf.general import (
 )
 
 LOG = logging.getLogger("blf")
-_OBJ_HEADER_BASE_SIZE: Final = ObjectHeaderBase.calc_size()
+
 _FILE_STATISTICS_SIZE: Final = FileStatistics.calc_size()
 
 
@@ -71,15 +72,15 @@ class BlfReader(AbstractContextManager):
                 stream.seek(1 - OBJ_SIGNATURE_SIZE, os.SEEK_CUR)
                 continue
 
-            header_base_data = signature + stream.read(_OBJ_HEADER_BASE_SIZE - OBJ_SIGNATURE_SIZE)
-            if len(header_base_data) < _OBJ_HEADER_BASE_SIZE:
+            header_base_data = signature + stream.read(OBJ_HEADER_BASE_SIZE - OBJ_SIGNATURE_SIZE)
+            if len(header_base_data) < OBJ_HEADER_BASE_SIZE:
                 self._incomplete_data = header_base_data
                 break
 
             # read object data
             header_base = ObjectHeaderBase.unpack(header_base_data)
             obj_data = header_base_data + stream.read(
-                header_base.object_size - _OBJ_HEADER_BASE_SIZE
+                header_base.object_size - OBJ_HEADER_BASE_SIZE
             )
             if len(obj_data) < header_base.object_size:
                 self._incomplete_data = obj_data

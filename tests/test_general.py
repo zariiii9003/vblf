@@ -38,11 +38,11 @@ def test_file_statistics():
 def test_app_text():
     raw = (DATA_DIR / "APP_TEXT.lobj").read_bytes()
     obj = AppText.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 97
-    assert obj.header.object_type is ObjTypeEnum.APP_TEXT
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 97
+    assert obj.header.base.object_type is ObjTypeEnum.APP_TEXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -58,11 +58,11 @@ def test_app_text():
 def test_app_trigger():
     raw = (DATA_DIR / "APP_TRIGGER.lobj").read_bytes()
     obj = AppTrigger.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 56
-    assert obj.header.object_type is ObjTypeEnum.APP_TRIGGER
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 56
+    assert obj.header.base.object_type is ObjTypeEnum.APP_TRIGGER
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -78,11 +78,11 @@ def test_app_trigger():
 def test_environment_variable_integer():
     raw = (DATA_DIR / "ENV_INTEGER.lobj").read_bytes()
     obj = EnvironmentVariable.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 55
-    assert obj.header.object_type is ObjTypeEnum.ENV_INTEGER
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 55
+    assert obj.header.base.object_type is ObjTypeEnum.ENV_INTEGER
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -98,11 +98,11 @@ def test_environment_variable_integer():
 def test_environment_variable_double():
     raw = (DATA_DIR / "ENV_DOUBLE.lobj").read_bytes()
     obj = EnvironmentVariable.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 59
-    assert obj.header.object_type is ObjTypeEnum.ENV_DOUBLE
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 59
+    assert obj.header.base.object_type is ObjTypeEnum.ENV_DOUBLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -118,11 +118,11 @@ def test_environment_variable_double():
 def test_environment_variable_string():
     raw = (DATA_DIR / "ENV_STRING.lobj").read_bytes()
     obj = EnvironmentVariable.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 54
-    assert obj.header.object_type is ObjTypeEnum.ENV_STRING
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 54
+    assert obj.header.base.object_type is ObjTypeEnum.ENV_STRING
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
@@ -138,11 +138,11 @@ def test_environment_variable_string():
 def test_environment_variable_data():
     raw = (DATA_DIR / "ENV_DATA.lobj").read_bytes()
     obj = EnvironmentVariable.unpack(raw)
-    assert obj.header.signature == b"LOBJ"
-    assert obj.header.header_size == 32
-    assert obj.header.header_version == 1
-    assert obj.header.object_size == 54
-    assert obj.header.object_type is ObjTypeEnum.ENV_DATA
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 54
+    assert obj.header.base.object_type is ObjTypeEnum.ENV_DATA
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
     assert obj.header.object_version == 0
