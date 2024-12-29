@@ -6,9 +6,9 @@ from blf.can import (
     CanErrorFrame,
     CanErrorFrameExt,
     CanFdErrorFrame64,
+    CanFdFlags,
     CanFdMessage,
     CanFdMessage64,
-    CanFdMessage64Flags,
     CanMessage,
     CanMessage2,
     CanOverloadFrame,
@@ -106,7 +106,7 @@ def test_canfd_message64():
     assert obj.frame_id == 168
     assert obj.frame_length == 104238
     assert obj.flags == 3158016
-    assert isinstance(obj.flags, CanFdMessage64Flags)
+    assert isinstance(obj.flags, CanFdFlags)
     assert obj.btr_cfg_arb == 1179648592
     assert obj.btr_cfg_data == 1260912976
     assert obj.time_offset_brs_ns == 68863

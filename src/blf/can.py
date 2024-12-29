@@ -1,9 +1,10 @@
 import struct
 from dataclasses import dataclass
-from enum import IntFlag
 from typing import ClassVar
 
 from typing_extensions import Self
+
+from blf.constants import CanFdFlags
 
 from .general import ObjectHeader, ObjectWithHeader
 
@@ -102,23 +103,6 @@ class CanMessage2(ObjectWithHeader):
         )
 
 
-class CanFdMessage64Flags(IntFlag):
-    NERR = 0x0004
-    HIGH_VOLTAGE_WAKE_UP = 0x0008
-    REMOTE_FRAME = 0x0010
-    TX_ACKNOWLEDGE = 0x0040
-    TX_REQUEST = 0x0080
-    SRR = 0x0200
-    R0 = 0x0400
-    R1 = 0x0800
-    FDF = 0x1000
-    BRS = 0x2000
-    ESI = 0x4000
-    FRAME_PART_OF_BURST = 0x20000
-    SINGLE_SHOT_MODE_NOT_TRANSMITTED = 0x40000
-    SINGLE_SHOT_MODE_REASON = 0x80000  # 0 = arbitration lost, 1 = frame disturbed
-
-
 @dataclass
 class CanFdMessage(ObjectWithHeader):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBIIBBBBI64sI")
@@ -129,7 +113,7 @@ class CanFdMessage(ObjectWithHeader):
     frame_id: int
     frame_length: int
     arb_bit_count: int
-    canfd_flags: int
+    canfd_flags: CanFdFlags
     valid_data_bytes: int
     reserved1: int
     reserved2: int
@@ -161,7 +145,7 @@ class CanFdMessage(ObjectWithHeader):
             frame_id,
             frame_length,
             arb_bit_count,
-            canfd_flags,
+            CanFdFlags(canfd_flags),
             valid_data_bytes,
             reserved1,
             reserved2,
@@ -197,7 +181,7 @@ class CanFdMessage64(ObjectWithHeader):
     tx_count: int
     frame_id: int
     frame_length: int
-    flags: CanFdMessage64Flags
+    flags: CanFdFlags
     btr_cfg_arb: int
     btr_cfg_data: int
     time_offset_brs_ns: int
@@ -249,7 +233,7 @@ class CanFdMessage64(ObjectWithHeader):
             tx_count,
             frame_id,
             frame_length,
-            CanFdMessage64Flags(flags),
+            CanFdFlags(flags),
             btr_cfg_arb,
             btr_cfg_data,
             time_offset_brs_ns,

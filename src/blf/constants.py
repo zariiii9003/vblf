@@ -153,3 +153,20 @@ class TriggerFlag(IntFlag):
     SINGLE_TRIGGER = 0x0
     LOGGING_START = 0x1
     LOGGING_STOP = 0x2
+
+
+class CanFdFlags(IntFlag):
+    NERR = 0x0004
+    HIGH_VOLTAGE_WAKE_UP = 0x0008
+    REMOTE_FRAME = 0x0010
+    TX_ACKNOWLEDGE = 0x0040
+    TX_REQUEST = 0x0080
+    SRR = 0x0200
+    R0 = 0x0400
+    R1 = 0x0800
+    FDF = 0x1000
+    BRS = 0x2000
+    ESI = 0x4000
+    FRAME_PART_OF_BURST = 0x20000
+    SINGLE_SHOT_MODE_NOT_TRANSMITTED = 0x40000
+    SINGLE_SHOT_MODE_REASON = 0x80000  # 0 = arbitration lost, 1 = frame disturbed
