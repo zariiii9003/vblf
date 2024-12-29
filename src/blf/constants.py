@@ -144,6 +144,25 @@ class ObjTypeEnum(IntEnum):
             return ObjTypeEnum.UNKNOWN
 
 
+class AppId(IntEnum):
+    UNKNOWN = 0
+    CANALYZER = 1
+    CANOE = 2
+    CANSTRESS = 3
+    CANLOG = 4
+    CANAPE = 5
+    CANCASEXLLOG = 6
+    VLCONFIG = 7
+    PORSCHELOGGER = 200
+
+    @staticmethod
+    def from_int(object_type: int) -> "AppId":
+        try:
+            return AppId(object_type)
+        except ValueError:
+            return AppId.UNKNOWN
+
+
 class ObjFlags(IntFlag):
     TIME_TEN_MICS = 0x1
     TIME_ONE_NANS = 0x2

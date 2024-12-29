@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from typing_extensions import Self
 
-from blf.constants import ObjFlags, ObjTypeEnum, TriggerFlag
+from blf.constants import AppId, ObjFlags, ObjTypeEnum, TriggerFlag
 
 
 @dataclass
@@ -258,7 +258,7 @@ class FileStatistics:
     signature: bytes
     statistics_size: int
     api_number: int
-    application_id: int
+    application_id: AppId
     compression_level: int
     application_major: int
     application_minor: int
@@ -294,7 +294,7 @@ class FileStatistics:
             signature,
             statistics_size,
             api_number,
-            application_id,
+            AppId.from_int(application_id),
             compression_level,
             application_major,
             application_minor,

@@ -1,4 +1,4 @@
-from blf.constants import ObjFlags, ObjTypeEnum, TriggerFlag
+from blf.constants import AppId, ObjFlags, ObjTypeEnum, TriggerFlag
 from blf.general import AppText, AppTrigger, EnvironmentVariable, FileStatistics
 from tests import DATA_DIR
 
@@ -9,7 +9,7 @@ def test_file_statistics():
     assert obj.signature == b"LOGG"
     assert obj.statistics_size == 144
     assert obj.api_number == 0x3E4630
-    assert obj.application_id == 2
+    assert obj.application_id is AppId.CANOE
     assert obj.compression_level == 1
     assert obj.application_major == 12
     assert obj.application_minor == 0
