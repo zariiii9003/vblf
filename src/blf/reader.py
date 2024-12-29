@@ -10,6 +10,7 @@ from typing import BinaryIO, Final, Optional, Union
 from blf.can import (
     CanDriverError,
     CanDriverErrorExt,
+    CanDriverHwSync,
     CanDriverStatistic,
     CanErrorFrame,
     CanErrorFrameExt,
@@ -171,7 +172,7 @@ OBJ_MAP: Final[dict[int, Optional[type[ObjectWithHeader]]]] = {
     ObjTypeEnum.FLEXRAY_MESSAGE.value: None,
     ObjTypeEnum.LIN_CHECKSUM_INFO.value: None,
     ObjTypeEnum.LIN_SPIKE_EVENT.value: None,
-    ObjTypeEnum.CAN_DRIVER_SYNC.value: None,
+    ObjTypeEnum.CAN_DRIVER_SYNC.value: CanDriverHwSync,
     ObjTypeEnum.FLEXRAY_STATUS.value: None,
     ObjTypeEnum.GPS_EVENT.value: None,
     ObjTypeEnum.FR_ERROR.value: None,

@@ -1,6 +1,7 @@
 from blf.can import (
     CanDriverError,
     CanDriverErrorExt,
+    CanDriverHwSync,
     CanDriverStatistic,
     CanErrorFrame,
     CanErrorFrameExt,
@@ -260,4 +261,23 @@ def test_canfd_error_frame64():
     assert obj.data == bytes(range(64))
     assert obj.btr_ext_arb == 286331153
     assert obj.btr_ext_data == 572662306
+    assert obj.pack() == raw
+
+
+def test_can_driver_hw_sync():
+    raw = (DATA_DIR / "CAN_DRIVER_SYNC.lobj").read_bytes()
+    obj = CanDriverHwSync.unpack(raw)
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 40
+    assert obj.header.object_type == 44
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.channel == 4369
+    assert obj.flags == 34
+    assert obj.reserved1 == 51
+    assert obj.reserved2 == 0
     assert obj.pack() == raw

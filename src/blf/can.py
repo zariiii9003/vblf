@@ -665,3 +665,24 @@ class CanFdErrorFrame64(ObjectWithHeader):
                 buffer, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data
             )
         return bytes(buffer)
+
+
+@dataclass
+class CanDriverHwSync(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBI")
+    header: ObjectHeader
+    channel: int
+    flags: int
+    reserved1: int
+    reserved2: int
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
+        channel, flags, reserved1, reserved2 = cls._FORMAT.unpack_from(buffer, header.header_size)
+        return cls(header, channel, flags, reserved1, reserved2)
+
+    def pack(self) -> bytes:
+        return self.header.pack() + self._FORMAT.pack(
+            self.channel, self.flags, self.reserved1, self.reserved2
+        )
