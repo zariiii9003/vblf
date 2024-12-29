@@ -3,6 +3,7 @@ from blf.can import (
     CanDriverErrorExt,
     CanDriverStatistic,
     CanErrorFrame,
+    CanErrorFrameExt,
     CanFdErrorFrame64,
     CanFdMessage,
     CanFdMessage64,
@@ -49,7 +50,7 @@ def test_can_message2():
     assert obj.flags == 34
     assert obj.dlc == 51
     assert obj.frame_id == 1145324612
-    assert obj.data == bytes([0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC])
+    assert obj.data == b"\x55\x66\x77\x88\x99\xaa\xbb\xcc"
     assert obj.frame_length == 3722304989
     assert obj.bit_count == 238
     assert obj.reserved1 == 255
@@ -196,6 +197,33 @@ def test_can_error_frame():
     assert obj.channel == 4369
     assert obj.length == 8738
     assert obj.reserved == 0
+    assert obj.pack() == raw
+
+
+def test_can_error_frame_ext():
+    raw = (DATA_DIR / "CAN_ERROR_EXT.lobj").read_bytes()
+    obj = CanErrorFrameExt.unpack(raw)
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 64
+    assert obj.header.object_type == 73
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.channel == 4369
+    assert obj.length == 8738
+    assert obj.flags == 858993459
+    assert obj.ecc == 68
+    assert obj.position == 85
+    assert obj.dlc == 102
+    assert obj.reserved1 == 119
+    assert obj.frame_length_in_ns == 2290649224
+    assert obj.frame_id == 2576980377
+    assert obj.flags_ext == 43690
+    assert obj.reserved2 == 48059
+    assert obj.data == b"\xcc\xdd\xee\xff\x11\x22\x33\x44"
     assert obj.pack() == raw
 
 

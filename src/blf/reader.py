@@ -12,6 +12,7 @@ from blf.can import (
     CanDriverErrorExt,
     CanDriverStatistic,
     CanErrorFrame,
+    CanErrorFrameExt,
     CanFdErrorFrame64,
     CanFdMessage,
     CanFdMessage64,
@@ -127,11 +128,12 @@ class BlfReader(AbstractContextManager):
 
 OBJ_MAP: Final[dict[int, type[ObjectWithHeader]]] = {
     ObjTypeEnum.CAN_MESSAGE.value: CanMessage,
-    ObjTypeEnum.CAN_ERROR: CanErrorFrame,
+    ObjTypeEnum.CAN_ERROR.value: CanErrorFrame,
     ObjTypeEnum.CAN_STATISTIC.value: CanDriverStatistic,
     ObjTypeEnum.LOG_CONTAINER.value: LogContainer,
     ObjTypeEnum.CAN_DRIVER_ERROR.value: CanDriverError,
     ObjTypeEnum.APP_TEXT.value: AppText,
+    ObjTypeEnum.CAN_ERROR_EXT.value: CanErrorFrameExt,
     ObjTypeEnum.CAN_DRIVER_ERROR_EXT.value: CanDriverErrorExt,
     ObjTypeEnum.CAN_MESSAGE2.value: CanMessage2,
     ObjTypeEnum.CAN_FD_MESSAGE.value: CanFdMessage,

@@ -472,6 +472,73 @@ class CanErrorFrame(ObjectWithHeader):
 
 
 @dataclass
+class CanErrorFrameExt(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HHIBBBBIIHH8s")
+    header: ObjectHeader
+    channel: int
+    length: int
+    flags: int
+    ecc: int
+    position: int
+    dlc: int
+    reserved1: int
+    frame_length_in_ns: int
+    frame_id: int
+    flags_ext: int
+    reserved2: int
+    data: bytes
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
+        (
+            channel,
+            length,
+            flags,
+            ecc,
+            position,
+            dlc,
+            reserverd1,
+            frame_length_in_ns,
+            frame_id,
+            flags_ext,
+            reserved2,
+            data,
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
+        return cls(
+            header,
+            channel,
+            length,
+            flags,
+            ecc,
+            position,
+            dlc,
+            reserverd1,
+            frame_length_in_ns,
+            frame_id,
+            flags_ext,
+            reserved2,
+            data,
+        )
+
+    def pack(self) -> bytes:
+        return self.header.pack() + self._FORMAT.pack(
+            self.channel,
+            self.length,
+            self.flags,
+            self.ecc,
+            self.position,
+            self.dlc,
+            self.reserved1,
+            self.frame_length_in_ns,
+            self.frame_id,
+            self.flags_ext,
+            self.reserved2,
+            self.data,
+        )
+
+
+@dataclass
 class CanFdErrorFrame64(ObjectWithHeader):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("BBBBHHHBBIIIIIIIHH")
     _FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")
