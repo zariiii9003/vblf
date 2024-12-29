@@ -156,11 +156,25 @@ class AppId(IntEnum):
     PORSCHELOGGER = 200
 
     @staticmethod
-    def from_int(object_type: int) -> "AppId":
+    def from_int(application_id: int) -> "AppId":
         try:
-            return AppId(object_type)
+            return AppId(application_id)
         except ValueError:
             return AppId.UNKNOWN
+
+
+class Compression(IntEnum):
+    NONE = 0
+    SPEED = 1
+    DEFAULT = 6
+    MAX = 9
+
+    @staticmethod
+    def from_int(compression_level: int) -> "Compression | int":
+        try:
+            return Compression(compression_level)
+        except ValueError:
+            return compression_level
 
 
 class ObjFlags(IntFlag):

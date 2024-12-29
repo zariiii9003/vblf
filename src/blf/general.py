@@ -1,10 +1,10 @@
 import struct
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import ClassVar, Union
 
 from typing_extensions import Self
 
-from blf.constants import AppId, ObjFlags, ObjTypeEnum, TriggerFlag
+from blf.constants import AppId, Compression, ObjFlags, ObjTypeEnum, TriggerFlag
 
 
 @dataclass
@@ -259,7 +259,7 @@ class FileStatistics:
     statistics_size: int
     api_number: int
     application_id: AppId
-    compression_level: int
+    compression_level: Union[int, Compression]
     application_major: int
     application_minor: int
     file_size: int
@@ -295,7 +295,7 @@ class FileStatistics:
             statistics_size,
             api_number,
             AppId.from_int(application_id),
-            compression_level,
+            Compression.from_int(compression_level),
             application_major,
             application_minor,
             file_size,
