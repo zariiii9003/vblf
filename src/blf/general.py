@@ -45,11 +45,37 @@ class ObjectHeaderBase:
 
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
-        raise NotImplementedError
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+        ) = cls._FORMAT.unpack(buffer)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            ObjTypeEnum.from_int(object_type),
+        )
 
     @classmethod
     def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
-        raise NotImplementedError
+        (
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            object_type,
+        ) = cls._FORMAT.unpack_from(buffer, offset)
+        return cls(
+            signature,
+            header_size,
+            header_version,
+            object_size,
+            ObjTypeEnum.from_int(object_type),
+        )
 
     def pack(self) -> bytes:
         return self._FORMAT.pack(*self.__dict__.values())
