@@ -11,6 +11,7 @@ from blf.can import (
     CanFdMessage64Flags,
     CanMessage,
     CanMessage2,
+    CanOverloadFrame,
 )
 from tests import DATA_DIR
 
@@ -279,5 +280,23 @@ def test_can_driver_hw_sync():
     assert obj.channel == 4369
     assert obj.flags == 34
     assert obj.reserved1 == 51
+    assert obj.reserved2 == 0
+    assert obj.pack() == raw
+
+
+def test_can_overload_frame():
+    raw = (DATA_DIR / "CAN_OVERLOAD.lobj").read_bytes()
+    obj = CanOverloadFrame.unpack(raw)
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 40
+    assert obj.header.object_type == 3
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.channel == 4369
+    assert obj.reserved1 == 8738
     assert obj.reserved2 == 0
     assert obj.pack() == raw

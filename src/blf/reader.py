@@ -19,6 +19,7 @@ from blf.can import (
     CanFdMessage64,
     CanMessage,
     CanMessage2,
+    CanOverloadFrame,
 )
 from blf.constants import OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjTypeEnum
 from blf.general import (
@@ -131,7 +132,7 @@ OBJ_MAP: Final[dict[int, Optional[type[ObjectWithHeader]]]] = {
     ObjTypeEnum.UNKNOWN.value: None,
     ObjTypeEnum.CAN_MESSAGE.value: CanMessage,
     ObjTypeEnum.CAN_ERROR.value: CanErrorFrame,
-    ObjTypeEnum.CAN_OVERLOAD.value: None,
+    ObjTypeEnum.CAN_OVERLOAD.value: CanOverloadFrame,
     ObjTypeEnum.CAN_STATISTIC.value: CanDriverStatistic,
     ObjTypeEnum.APP_TRIGGER.value: None,
     ObjTypeEnum.ENV_INTEGER.value: None,
