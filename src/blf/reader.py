@@ -23,9 +23,12 @@ from blf.general import (
     FileStatistics,
     LogContainer,
     ObjectHeaderBase,
+    ObjectWithHeader,
 )
 
 LOG = logging.getLogger("blf")
+_OBJ_HEADER_BASE_SIZE: Final = ObjectHeaderBase.calc_size()
+_FILE_STATISTICS_SIZE: Final = FileStatistics.calc_size()
 
 
 class BlfReader(AbstractContextManager):
@@ -41,17 +44,17 @@ class BlfReader(AbstractContextManager):
             err_msg = "Unsupported type {type(file)}"
             raise TypeError(err_msg)
 
-        obj_data = self._file.read(FileStatistics.FORMAT.size)
-        if len(obj_data) < FileStatistics.FORMAT.size or not obj_data.startswith(b"LOGG"):
+        obj_data = self._file.read(_FILE_STATISTICS_SIZE)
+        if len(obj_data) < _FILE_STATISTICS_SIZE or not obj_data.startswith(b"LOGG"):
             err_msg = "Unexpected file format"
             raise ValueError(err_msg)
 
-        self.file_statistics = FileStatistics.unpack(self._file.read(FileStatistics.FORMAT.size))
+        self.file_statistics = FileStatistics.unpack(self._file.read(_FILE_STATISTICS_SIZE))
 
         self._incomplete_data: bytes = b""
         self._generator = self._generate_objects(self._file)
 
-    def _generate_objects(self, stream: BinaryIO) -> Iterator[ObjectHeaderBase]:
+    def _generate_objects(self, stream: BinaryIO) -> Iterator[ObjectWithHeader]:
         while True:
             signature = stream.read(OBJ_SIGNATURE_SIZE)
             if len(signature) != OBJ_SIGNATURE_SIZE:
@@ -62,17 +65,15 @@ class BlfReader(AbstractContextManager):
                 stream.seek(1 - OBJ_SIGNATURE_SIZE, os.SEEK_CUR)
                 continue
 
-            header_base_data = signature + stream.read(
-                ObjectHeaderBase.FORMAT.size - OBJ_SIGNATURE_SIZE
-            )
-            if len(header_base_data) < ObjectHeaderBase.FORMAT.size:
+            header_base_data = signature + stream.read(_OBJ_HEADER_BASE_SIZE - OBJ_SIGNATURE_SIZE)
+            if len(header_base_data) < _OBJ_HEADER_BASE_SIZE:
                 self._incomplete_data = header_base_data
                 break
 
             # read object data
             header_base = ObjectHeaderBase.unpack(header_base_data)
             obj_data = header_base_data + stream.read(
-                header_base.object_size - ObjectHeaderBase.FORMAT.size
+                header_base.object_size - _OBJ_HEADER_BASE_SIZE
             )
             if len(obj_data) < header_base.object_size:
                 self._incomplete_data = obj_data
@@ -108,7 +109,7 @@ class BlfReader(AbstractContextManager):
             else:
                 yield obj_class.unpack(obj_data)
 
-    def __iter__(self) -> Iterator[ObjectHeaderBase]:
+    def __iter__(self) -> Iterator[ObjectWithHeader]:
         return self._generator.__iter__()
 
     def __enter__(self) -> "BlfReader":
@@ -123,7 +124,7 @@ class BlfReader(AbstractContextManager):
         self._file.close()
 
 
-OBJ_MAP: Final[dict[int, type[ObjectHeaderBase]]] = {
+OBJ_MAP: Final[dict[int, type[ObjectWithHeader]]] = {
     ObjTypeEnum.CAN_MESSAGE.value: CanMessage,
     ObjTypeEnum.CAN_STATISTIC.value: CanDriverStatistic,
     ObjTypeEnum.LOG_CONTAINER.value: LogContainer,

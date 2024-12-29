@@ -2,10 +2,12 @@ import struct
 from dataclasses import dataclass
 from typing import ClassVar
 
+from typing_extensions import Self
+
 
 @dataclass
 class SystemTime:
-    FORMAT: ClassVar[struct.Struct] = struct.Struct("HHHHHHHH")
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HHHHHHHH")
     year: int
     month: int
     day_of_week: int
@@ -16,16 +18,23 @@ class SystemTime:
     milliseconds: int
 
     @classmethod
-    def unpack(cls, data: bytes) -> "SystemTime":
-        return cls(*cls.FORMAT.unpack(data))
+    def unpack(cls, buffer: bytes) -> Self:
+        return cls(*cls._FORMAT.unpack(buffer))
 
     def pack(self) -> bytes:
-        return self.FORMAT.pack(*self.__dict__.values())
+        return self._FORMAT.pack(*self.__dict__.values())
+
+    @classmethod
+    def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
+        return cls(*cls._FORMAT.unpack_from(buffer, offset))
+
+    def pack_into(self, buffer: bytearray, offset: int) -> None:
+        return self._FORMAT.pack_into(buffer, offset, *self.__dict__.values())
 
 
 @dataclass
 class ObjectHeaderBase:
-    FORMAT: ClassVar[struct.Struct] = struct.Struct("4sHHII")
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("4sHHII")
     signature: bytes
     header_size: int
     header_version: int
@@ -33,48 +42,45 @@ class ObjectHeaderBase:
     object_type: int
 
     @classmethod
-    def unpack(cls, data: bytes) -> "ObjectHeaderBase":
-        return cls(*cls.FORMAT.unpack(data))
+    def unpack(cls, buffer: bytes) -> Self:
+        return cls(*cls._FORMAT.unpack(buffer))
 
     def pack(self) -> bytes:
-        return self.FORMAT.pack(*self.__dict__.values())
+        return self._FORMAT.pack(*self.__dict__.values())
+
+    @classmethod
+    def unpack_from(cls, buffer: bytes, offset: int = 0) -> Self:
+        return cls(*cls._FORMAT.unpack_from(buffer, offset))
+
+    def pack_into(self, buffer: bytearray, offset: int) -> None:
+        return self._FORMAT.pack_into(buffer, offset, *self.__dict__.values())
+
+    @classmethod
+    def calc_size(cls) -> int:
+        return cls._FORMAT.size
 
 
 @dataclass
 class VarObjectHeader(ObjectHeaderBase):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeaderBase.FORMAT.format + "IHHQ")
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeaderBase._FORMAT.format + "IHHQ")
     object_flags: int
     object_static_size: int
     object_version: int
     object_time_stamp: int
 
-    @classmethod
-    def unpack(cls, data: bytes) -> "VarObjectHeader":
-        return cls(*cls.FORMAT.unpack(data))
-
-    def pack(self) -> bytes:
-        return self.FORMAT.pack(*self.__dict__.values())
-
 
 @dataclass
 class ObjectHeader(ObjectHeaderBase):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeaderBase.FORMAT.format + "IHHQ")
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeaderBase._FORMAT.format + "IHHQ")
     object_flags: int
     client_index: int
     object_version: int
     object_time_stamp: int
 
-    @classmethod
-    def unpack(cls, data: bytes) -> "ObjectHeader":
-        return cls(*cls.FORMAT.unpack(data))
-
-    def pack(self) -> bytes:
-        return self.FORMAT.pack(*self.__dict__.values())
-
 
 # @dataclass
 # class ObjectHeader2(ObjectHeaderBase):
-#     FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeaderBase.FORMAT.format + "IBBHQQ")
+#     _FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeaderBase._FORMAT.format + "IBBHQQ")
 #     object_flags: int
 #     time_stamp_status: int
 #     reserved1: int
@@ -82,37 +88,40 @@ class ObjectHeader(ObjectHeaderBase):
 #     object_time_stamp: int
 #     original_time_stamp: int
 
-#     @classmethod
-#     def unpack(cls, data: bytes) -> "ObjectHeader2":
-#         return cls(*cls.FORMAT.unpack(data))
 
-#     def pack(self) -> bytes:
-#         return self.FORMAT.pack(*self.__dict__.values())
+@dataclass
+class ObjectWithHeader:
+    header: ObjectHeaderBase
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        raise NotImplementedError
+
+    def pack(self) -> bytes:
+        raise NotImplementedError
 
 
 @dataclass
 class FileStatistics:
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(
-        "4sIIBBBBQQII" + SystemTime.FORMAT.format + SystemTime.FORMAT.format + "Q64s"
-    )
-    signature: bytes  # offset: 0x00
-    statistics_size: int  # offset: 0x04
-    api_number: int  # offset: 0x08
-    application_id: int  # offset: 0x0C
-    compression_level: int  # offset: 0x0D
-    application_major: int  # offset: 0x0E
-    application_minor: int  # offset: 0x0F
-    file_size: int  # offset: 0x10
-    uncompressed_file_size: int  # offset: 0x18
-    object_count: int  # offset: 0x20
-    application_build: int  # offset: 0x24
-    measurement_start_time: SystemTime  # offset: 0x28
-    last_object_time: SystemTime  # offset: 0x38
-    restore_points_offset: int  # offset: 0x48
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("4sIIBBBBQQII32xQ64s")
+    signature: bytes
+    statistics_size: int
+    api_number: int
+    application_id: int
+    compression_level: int
+    application_major: int
+    application_minor: int
+    file_size: int
+    uncompressed_file_size: int
+    object_count: int
+    application_build: int
+    measurement_start_time: SystemTime
+    last_object_time: SystemTime
+    restore_points_offset: int
     reserved: bytes
 
     @classmethod
-    def unpack(cls, data: bytes) -> "FileStatistics":
+    def unpack(cls, buffer: bytes) -> "FileStatistics":
         (
             signature,
             statistics_size,
@@ -125,25 +134,11 @@ class FileStatistics:
             uncompressed_file_size,
             object_count,
             application_build,
-            measurement_start_time_year,
-            measurement_start_time_month,
-            measurement_start_time_day_of_week,
-            measurement_start_time_day,
-            measurement_start_time_hour,
-            measurement_start_time_minute,
-            measurement_start_time_second,
-            measurement_start_time_milliseconds,
-            last_object_time_year,
-            last_object_time_month,
-            last_object_time_day_of_week,
-            last_object_time_day,
-            last_object_time_hour,
-            last_object_time_minute,
-            last_object_time_second,
-            last_object_time_milliseconds,
             restore_points_offset,
             reserved,
-        ) = cls.FORMAT.unpack(data)
+        ) = cls._FORMAT.unpack(buffer)
+        measurement_start_time = SystemTime.unpack_from(buffer, 40)
+        last_object_time = SystemTime.unpack_from(buffer, 56)
         return cls(
             signature,
             statistics_size,
@@ -156,32 +151,17 @@ class FileStatistics:
             uncompressed_file_size,
             object_count,
             application_build,
-            SystemTime(
-                measurement_start_time_year,
-                measurement_start_time_month,
-                measurement_start_time_day_of_week,
-                measurement_start_time_day,
-                measurement_start_time_hour,
-                measurement_start_time_minute,
-                measurement_start_time_second,
-                measurement_start_time_milliseconds,
-            ),
-            SystemTime(
-                last_object_time_year,
-                last_object_time_month,
-                last_object_time_day_of_week,
-                last_object_time_day,
-                last_object_time_hour,
-                last_object_time_minute,
-                last_object_time_second,
-                last_object_time_milliseconds,
-            ),
+            measurement_start_time,
+            last_object_time,
             restore_points_offset,
             reserved,
         )
 
     def pack(self) -> bytes:
-        return self.FORMAT.pack(
+        buffer = bytearray(self._FORMAT.size)
+        self._FORMAT.pack_into(
+            buffer,
+            0,
             self.signature,
             self.statistics_size,
             self.api_number,
@@ -193,50 +173,36 @@ class FileStatistics:
             self.uncompressed_file_size,
             self.object_count,
             self.application_build,
-            *self.measurement_start_time.__dict__.values(),
-            *self.last_object_time.__dict__.values(),
             self.restore_points_offset,
             self.reserved,
         )
+        self.measurement_start_time.pack_into(buffer, 40)
+        self.last_object_time.pack_into(buffer, 56)
+        return bytes(buffer)
+
+    @classmethod
+    def calc_size(cls) -> int:
+        return cls._FORMAT.size
 
 
 @dataclass
-class LogContainer(ObjectHeader):
+class LogContainer(ObjectWithHeader):
+    header: ObjectHeader
     data: bytes
 
     @classmethod
-    def unpack(cls, data: bytes) -> "LogContainer":
-        (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
-        ) = cls.FORMAT.unpack_from(data)
-        return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
-            data[header_size:],
-        )
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
+        return cls(header, buffer[header.header_size :])
 
     def pack(self) -> bytes:
-        return super().pack() + self.data
+        return self.header.pack() + self.data
 
 
 @dataclass
-class AppText(ObjectHeader):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "IIII")
+class AppText(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIII")
+    header: ObjectHeader
     source: int
     reserved1: int
     text_length: int
@@ -244,33 +210,18 @@ class AppText(ObjectHeader):
     text: str
 
     @classmethod
-    def unpack(cls, data: bytes) -> "AppText":
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
             source,
             reserved1,
             text_length,
             reserved2,
-        ) = cls.FORMAT.unpack_from(data)
-        text = data[cls.FORMAT.size : cls.FORMAT.size + text_length - 1].decode("mbcs")
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
+        text_offset = header.header_size + cls._FORMAT.size
+        text = buffer[text_offset : text_offset + text_length - 1].decode("mbcs")
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
+            header,
             source,
             reserved1,
             text_length,
@@ -279,24 +230,17 @@ class AppText(ObjectHeader):
         )
 
     def pack(self) -> bytes:
-        raw = bytearray(self.object_size)
-        self.FORMAT.pack_into(
-            raw,
-            0,
-            self.signature,
-            self.header_size,
-            self.header_version,
-            self.object_size,
-            self.object_type,
-            self.object_flags,
-            self.client_index,
-            self.object_version,
-            self.object_time_stamp,
+        buffer = bytearray(self.header.object_size)
+        self.header.pack_into(buffer, 0)
+        self._FORMAT.pack_into(
+            buffer,
+            self.header.header_size,
             self.source,
             self.reserved1,
             self.text_length,
             self.reserved2,
         )
         encoded_text = self.text.encode("mbcs") + b"\x00"
-        raw[self.FORMAT.size : self.FORMAT.size + self.text_length] = encoded_text
-        return bytes(raw)
+        text_offset = self.header.header_size + self._FORMAT.size
+        buffer[text_offset : text_offset + self.text_length] = encoded_text
+        return bytes(buffer)

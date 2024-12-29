@@ -3,12 +3,15 @@ from dataclasses import dataclass
 from enum import IntFlag
 from typing import ClassVar
 
-from .general import ObjectHeader
+from typing_extensions import Self
+
+from .general import ObjectHeader, ObjectWithHeader
 
 
 @dataclass
-class CanMessage(ObjectHeader):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HBBI8s")
+class CanMessage(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBI8s")
+    header: ObjectHeader
     channel: int
     flags: int
     dlc: int
@@ -16,33 +19,17 @@ class CanMessage(ObjectHeader):
     data: bytes
 
     @classmethod
-    def unpack(cls, data: bytes) -> "CanMessage":
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
             channel,
             flags,
             dlc,
             frame_id,
             data_,
-        ) = cls.FORMAT.unpack_from(data)
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
+            header,
             channel,
             flags,
             dlc,
@@ -51,16 +38,7 @@ class CanMessage(ObjectHeader):
         )
 
     def pack(self) -> bytes:
-        return self.FORMAT.pack(
-            self.signature,
-            self.header_size,
-            self.header_version,
-            self.object_size,
-            self.object_type,
-            self.object_flags,
-            self.client_index,
-            self.object_version,
-            self.object_time_stamp,
+        return self.header.pack() + self._FORMAT.pack(
             self.channel,
             self.flags,
             self.dlc,
@@ -70,8 +48,9 @@ class CanMessage(ObjectHeader):
 
 
 @dataclass
-class CanMessage2(ObjectHeader):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HBBI8sIBBH")
+class CanMessage2(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBI8sIBBH")
+    header: ObjectHeader
     channel: int
     flags: int
     dlc: int
@@ -83,17 +62,9 @@ class CanMessage2(ObjectHeader):
     reserved2: int
 
     @classmethod
-    def unpack(cls, data: bytes) -> "CanMessage2":
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
             channel,
             flags,
             dlc,
@@ -103,17 +74,9 @@ class CanMessage2(ObjectHeader):
             bit_count,
             reserved1,
             reserved2,
-        ) = cls.FORMAT.unpack_from(data)
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
+            header,
             channel,
             flags,
             dlc,
@@ -126,16 +89,7 @@ class CanMessage2(ObjectHeader):
         )
 
     def pack(self) -> bytes:
-        return self.FORMAT.pack(
-            self.signature,
-            self.header_size,
-            self.header_version,
-            self.object_size,
-            self.object_type,
-            self.object_flags,
-            self.client_index,
-            self.object_version,
-            self.object_time_stamp,
+        return self.header.pack() + self._FORMAT.pack(
             self.channel,
             self.flags,
             self.dlc,
@@ -166,8 +120,9 @@ class CanFdMessage64Flags(IntFlag):
 
 
 @dataclass
-class CanFdMessage(ObjectHeader):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HBBIIBBBBI64sI")
+class CanFdMessage(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBIIBBBBI64sI")
+    header: ObjectHeader
     channel: int
     flags: int
     dlc: int
@@ -182,17 +137,9 @@ class CanFdMessage(ObjectHeader):
     reserved3: int
 
     @classmethod
-    def unpack(cls, data: bytes) -> "CanFdMessage":
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
             channel,
             flags,
             dlc,
@@ -205,17 +152,9 @@ class CanFdMessage(ObjectHeader):
             reserved2,
             data_,
             reserved3,
-        ) = cls.FORMAT.unpack_from(data)
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
+            header,
             channel,
             flags,
             dlc,
@@ -231,16 +170,7 @@ class CanFdMessage(ObjectHeader):
         )
 
     def pack(self) -> bytes:
-        return self.FORMAT.pack(
-            self.signature,
-            self.header_size,
-            self.header_version,
-            self.object_size,
-            self.object_type,
-            self.object_flags,
-            self.client_index,
-            self.object_version,
-            self.object_time_stamp,
+        return self.header.pack() + self._FORMAT.pack(
             self.channel,
             self.flags,
             self.dlc,
@@ -257,9 +187,10 @@ class CanFdMessage(ObjectHeader):
 
 
 @dataclass
-class CanFdMessage64(ObjectHeader):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "BBBBIIIIIIIHBBI")
-    FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")
+class CanFdMessage64(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("BBBBIIIIIIIHBBI")
+    _FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")
+    header: ObjectHeader
     channel: int
     dlc: int
     valid_data_bytes: int
@@ -280,18 +211,10 @@ class CanFdMessage64(ObjectHeader):
     btr_ext_data: int
 
     @classmethod
-    def unpack(cls, data: bytes) -> "CanFdMessage64":
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
         # get fixed size values
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
             channel,
             dlc,
             valid_data_bytes,
@@ -307,23 +230,19 @@ class CanFdMessage64(ObjectHeader):
             dir,
             ext_data_offset,
             crc,
-        ) = cls.FORMAT.unpack_from(data)
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
+
+        # get data
+        data_offset = header.header_size + cls._FORMAT.size
+        data = buffer[data_offset : data_offset + valid_data_bytes]
 
         # get ext frame data
         btr_ext_arb, btr_ext_data = 0, 0
-        if object_size >= ext_data_offset + cls.FORMAT_EXT.size:
-            btr_ext_arb, btr_ext_data = cls.FORMAT_EXT.unpack_from(data, ext_data_offset)
+        if header.object_size >= ext_data_offset + cls._FORMAT_EXT.size:
+            btr_ext_arb, btr_ext_data = cls._FORMAT_EXT.unpack_from(buffer, ext_data_offset)
 
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
+            header,
             channel,
             dlc,
             valid_data_bytes,
@@ -339,27 +258,21 @@ class CanFdMessage64(ObjectHeader):
             dir,
             ext_data_offset,
             crc,
-            data[cls.FORMAT.size : cls.FORMAT.size + valid_data_bytes],
+            data,
             btr_ext_arb,
             btr_ext_data,
         )
 
     def pack(self) -> bytes:
-        raw = bytearray(self.object_size)
+        buffer = bytearray(self.header.object_size)
+
+        # pack header
+        self.header.pack_into(buffer, 0)
 
         # pack fixed size values
-        self.FORMAT.pack_into(
-            raw,
-            0,
-            self.signature,
-            self.header_size,
-            self.header_version,
-            self.object_size,
-            self.object_type,
-            self.object_flags,
-            self.client_index,
-            self.object_version,
-            self.object_time_stamp,
+        self._FORMAT.pack_into(
+            buffer,
+            self.header.header_size,
             self.channel,
             self.dlc,
             self.valid_data_bytes,
@@ -378,19 +291,21 @@ class CanFdMessage64(ObjectHeader):
         )
 
         # pack data
-        raw[self.FORMAT.size : self.FORMAT.size + self.valid_data_bytes] = self.data
+        data_offset = self.header.header_size + self._FORMAT.size
+        buffer[data_offset : data_offset + self.valid_data_bytes] = self.data
 
         # pack ext frame data
-        if self.object_size >= self.ext_data_offset + self.FORMAT_EXT.size:
-            self.FORMAT_EXT.pack_into(
-                raw, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data
+        if self.header.object_size >= self.ext_data_offset + self._FORMAT_EXT.size:
+            self._FORMAT_EXT.pack_into(
+                buffer, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data
             )
-        return bytes(raw)
+        return bytes(buffer)
 
 
 @dataclass
-class CanDriverStatistic(ObjectHeader):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HHIIIIIII")
+class CanDriverStatistic(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HHIIIIIII")
+    header: ObjectHeader
     channel: int
     bus_load: int
     standard_data_frames: int
@@ -402,32 +317,85 @@ class CanDriverStatistic(ObjectHeader):
     reserved: int
 
     @classmethod
-    def unpack(cls, data: bytes) -> "CanDriverStatistic":
-        return cls(*cls.FORMAT.unpack(data))
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
+        (
+            channel,
+            bus_load,
+            standard_data_frames,
+            extended_data_frames,
+            standard_remote_frames,
+            extended_remote_frames,
+            error_frames,
+            overload_frames,
+            reserved,
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
+        return cls(
+            header,
+            channel,
+            bus_load,
+            standard_data_frames,
+            extended_data_frames,
+            standard_remote_frames,
+            extended_remote_frames,
+            error_frames,
+            overload_frames,
+            reserved,
+        )
 
     def pack(self) -> bytes:
-        return self.FORMAT.pack(*self.__dict__.values())
+        return self.header.pack() + self._FORMAT.pack(
+            self.channel,
+            self.bus_load,
+            self.standard_data_frames,
+            self.extended_data_frames,
+            self.standard_remote_frames,
+            self.extended_remote_frames,
+            self.error_frames,
+            self.overload_frames,
+            self.reserved,
+        )
 
 
 @dataclass
-class CanDriverError(ObjectHeader):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HBBI")
+class CanDriverError(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBI")
+    header: ObjectHeader
     channel: int
     tx_errors: int
     rx_errors: int
     error_code: int
 
     @classmethod
-    def unpack(cls, data: bytes) -> "CanDriverError":
-        return cls(*cls.FORMAT.unpack(data))
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
+        (
+            channel,
+            tx_errors,
+            rx_errors,
+            error_code,
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
+        return cls(
+            header,
+            channel,
+            tx_errors,
+            rx_errors,
+            error_code,
+        )
 
     def pack(self) -> bytes:
-        return self.FORMAT.pack(*self.__dict__.values())
+        return self.header.pack() + self._FORMAT.pack(
+            self.channel,
+            self.tx_errors,
+            self.rx_errors,
+            self.error_code,
+        )
 
 
 @dataclass
-class CanDriverErrorExt(ObjectHeader):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeader.FORMAT.format + "HBBIIBBH4I")
+class CanDriverErrorExt(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBIIBBH4I")
+    header: ObjectHeader
     channel: int
     tx_errors: int
     rx_errors: int
@@ -439,17 +407,9 @@ class CanDriverErrorExt(ObjectHeader):
     reserved3: list[int]
 
     @classmethod
-    def unpack(cls, data: bytes) -> "CanDriverErrorExt":
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
             channel,
             tx_errors,
             rx_errors,
@@ -462,17 +422,9 @@ class CanDriverErrorExt(ObjectHeader):
             reserved3_1,
             reserved3_2,
             reserved3_3,
-        ) = cls.FORMAT.unpack(data)
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
+            header,
             channel,
             tx_errors,
             rx_errors,
@@ -485,16 +437,7 @@ class CanDriverErrorExt(ObjectHeader):
         )
 
     def pack(self) -> bytes:
-        return self.FORMAT.pack(
-            self.signature,
-            self.header_size,
-            self.header_version,
-            self.object_size,
-            self.object_type,
-            self.object_flags,
-            self.client_index,
-            self.object_version,
-            self.object_time_stamp,
+        return self.header.pack() + self._FORMAT.pack(
             self.channel,
             self.tx_errors,
             self.rx_errors,
@@ -511,11 +454,10 @@ class CanDriverErrorExt(ObjectHeader):
 
 
 @dataclass
-class CanFdErrorFrame64(ObjectHeader):
-    FORMAT: ClassVar[struct.Struct] = struct.Struct(
-        ObjectHeader.FORMAT.format + "BBBBHHHBBIIIIIIIHH"
-    )
-    FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")
+class CanFdErrorFrame64(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("BBBBHHHBBIIIIIIIHH")
+    _FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")
+    header: ObjectHeader
     channel: int
     dlc: int
     valid_data_bytes: int
@@ -539,18 +481,11 @@ class CanFdErrorFrame64(ObjectHeader):
     btr_ext_data: int
 
     @classmethod
-    def unpack(cls, data: bytes) -> "CanFdErrorFrame64":
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
+
         # get fixed size values
         (
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
             channel,
             dlc,
             valid_data_bytes,
@@ -569,23 +504,19 @@ class CanFdErrorFrame64(ObjectHeader):
             crc,
             error_position,
             reserved2,
-        ) = cls.FORMAT.unpack_from(data)
+        ) = cls._FORMAT.unpack_from(buffer, header.header_size)
+
+        # get data
+        data_offset = header.header_size + cls._FORMAT.size
+        data = buffer[data_offset : data_offset + valid_data_bytes]
 
         # get ext frame data
         btr_ext_arb, btr_ext_data = 0, 0
-        if object_size >= ext_data_offset + cls.FORMAT_EXT.size:
-            btr_ext_arb, btr_ext_data = cls.FORMAT_EXT.unpack_from(data, ext_data_offset)
+        if header.object_size >= ext_data_offset + cls._FORMAT_EXT.size:
+            btr_ext_arb, btr_ext_data = cls._FORMAT_EXT.unpack_from(buffer, ext_data_offset)
 
         return cls(
-            signature,
-            header_size,
-            header_version,
-            object_size,
-            object_type,
-            object_flags,
-            client_index,
-            object_version,
-            object_time_stamp,
+            header,
             channel,
             dlc,
             valid_data_bytes,
@@ -604,27 +535,21 @@ class CanFdErrorFrame64(ObjectHeader):
             crc,
             error_position,
             reserved2,
-            data[cls.FORMAT.size : cls.FORMAT.size + valid_data_bytes],
+            data,
             btr_ext_arb,
             btr_ext_data,
         )
 
     def pack(self) -> bytes:
-        raw = bytearray(self.object_size)
+        buffer = bytearray(self.header.object_size)
+
+        # pack header
+        self.header.pack_into(buffer, 0)
 
         # pack fixed size values
-        self.FORMAT.pack_into(
-            raw,
-            0,
-            self.signature,
-            self.header_size,
-            self.header_version,
-            self.object_size,
-            self.object_type,
-            self.object_flags,
-            self.client_index,
-            self.object_version,
-            self.object_time_stamp,
+        self._FORMAT.pack_into(
+            buffer,
+            self.header.header_size,
             self.channel,
             self.dlc,
             self.valid_data_bytes,
@@ -646,11 +571,12 @@ class CanFdErrorFrame64(ObjectHeader):
         )
 
         # pack data
-        raw[self.FORMAT.size : self.FORMAT.size + self.valid_data_bytes] = self.data
+        data_offset = self.header.header_size + self._FORMAT.size
+        buffer[data_offset : data_offset + self.valid_data_bytes] = self.data
 
         # pack ext frame data
-        if self.object_size >= self.ext_data_offset + self.FORMAT_EXT.size:
-            self.FORMAT_EXT.pack_into(
-                raw, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data
+        if self.header.object_size >= self.ext_data_offset + self._FORMAT_EXT.size:
+            self._FORMAT_EXT.pack_into(
+                buffer, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data
             )
-        return bytes(raw)
+        return bytes(buffer)

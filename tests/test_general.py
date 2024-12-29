@@ -37,15 +37,15 @@ def test_file_statistics():
 def test_app_text():
     raw = (DATA_DIR / "APP_TEXT.lobj").read_bytes()
     obj = AppText.unpack(raw)
-    assert obj.signature == b"LOBJ"
-    assert obj.header_size == 32
-    assert obj.header_version == 1
-    assert obj.object_size == 97
-    assert obj.object_type == 65
-    assert obj.object_flags == 2
-    assert obj.client_index == 0
-    assert obj.object_version == 0
-    assert obj.object_time_stamp == 0
+    assert obj.header.signature == b"LOBJ"
+    assert obj.header.header_size == 32
+    assert obj.header.header_version == 1
+    assert obj.header.object_size == 97
+    assert obj.header.object_type == 65
+    assert obj.header.object_flags == 2
+    assert obj.header.client_index == 0
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 0
     assert obj.source == 1
     assert obj.reserved1 == 16843009
     assert obj.text_length == 49
