@@ -224,3 +224,11 @@ class BusType(IntEnum):
     ETHERNET = 10
     WLAN = 13
     AFDX = 14
+
+
+class AppTextSource(IntEnum):
+    MEASUREMENTCOMMENT = 0
+    DBCHANNELINFO = 1
+    METADATA = 2
+    ATTACHMENT = 3
+    TRACELINE = 4

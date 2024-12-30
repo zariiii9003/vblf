@@ -6,6 +6,7 @@ from typing_extensions import Self
 
 from blf.constants import (
     AppId,
+    AppTextSource,
     BusType,
     Compression,
     ObjFlags,
@@ -380,7 +381,7 @@ class LogContainer(ObjectWithHeader):
 class AppText(ObjectWithHeader):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIII")
     header: ObjectHeader
-    source: int
+    source: AppTextSource
     reserved1: int
     text_length: int
     reserved2: int
@@ -399,7 +400,7 @@ class AppText(ObjectWithHeader):
         text = buffer[text_offset : text_offset + text_length - 1].decode("mbcs")
         return cls(
             header,
-            source,
+            AppTextSource(source),
             reserved1,
             text_length,
             reserved2,

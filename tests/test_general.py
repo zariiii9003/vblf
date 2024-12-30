@@ -1,5 +1,6 @@
 from blf.constants import (
     AppId,
+    AppTextSource,
     BusType,
     Compression,
     ObjFlags,
@@ -64,7 +65,7 @@ def test_app_text():
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
     assert obj.header.object_time_stamp == 0
-    assert obj.source == 1
+    assert obj.source is AppTextSource.DBCHANNELINFO
     assert obj.reserved1 == 16843009
     assert obj.text_length == 49
     assert obj.reserved2 == 0
