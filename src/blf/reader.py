@@ -31,6 +31,7 @@ from blf.general import (
     NotImplementedObject,
     ObjectHeaderBase,
     ObjectWithHeader,
+    RealTimeClock,
 )
 
 LOG = logging.getLogger("blf")
@@ -178,7 +179,7 @@ OBJ_MAP: Final[dict[ObjTypeEnum, Optional[type[ObjectWithHeader]]]] = {
     ObjTypeEnum.FR_STATUS: None,
     ObjTypeEnum.FR_STARTCYCLE: None,
     ObjTypeEnum.FR_RCVMESSAGE: None,
-    ObjTypeEnum.REALTIMECLOCK: None,
+    ObjTypeEnum.REALTIMECLOCK: RealTimeClock,
     ObjTypeEnum.AVAILABLE2: None,
     ObjTypeEnum.AVAILABLE3: None,
     ObjTypeEnum.LIN_STATISTIC: None,
