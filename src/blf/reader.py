@@ -37,6 +37,7 @@ from blf.general import (
     ObjectWithHeader,
     RealTimeClock,
     SystemVariable,
+    TriggerCondition,
 )
 
 LOG = logging.getLogger("blf")
@@ -261,5 +262,5 @@ OBJ_MAP: Final[dict[ObjType, Optional[type[ObjectWithHeader]]]] = {
     ObjType.DATA_LOST_BEGIN: None,
     ObjType.DATA_LOST_END: None,
     ObjType.WATER_MARK_EVENT: None,
-    ObjType.TRIGGER_CONDITION: None,
+    ObjType.TRIGGER_CONDITION: TriggerCondition,
 }

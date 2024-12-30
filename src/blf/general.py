@@ -13,6 +13,7 @@ from blf.constants import (
     ObjFlags,
     ObjType,
     SysVarType,
+    TriggerConditionStatus,
     TriggerFlag,
 )
 
@@ -829,4 +830,59 @@ class FunctionBus(ObjectWithHeader):
             )
             + self.name.encode("mbcs")
             + self.data
+        )
+
+
+@dataclass
+class TriggerCondition(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("III")
+    header: VarObjectHeader
+    state: TriggerConditionStatus
+    trigger_block_name_length: int
+    trigger_condition_length: int
+    trigger_block_name: str
+    trigger_condition: str
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = VarObjectHeader.unpack_from(buffer, 0)
+        (
+            state,
+            trigger_block_name_length,
+            trigger_condition_length,
+        ) = cls._FORMAT.unpack_from(buffer, VarObjectHeader.SIZE)
+
+        # get trigger_block_name
+        trigger_block_name_offset = ObjectHeader.SIZE + cls._FORMAT.size
+        _trigger_block_name = buffer[
+            trigger_block_name_offset : trigger_block_name_offset + trigger_block_name_length
+        ]
+        trigger_block_name = _trigger_block_name.decode("mbcs")
+
+        # get trigger_condition
+        trigger_condition_offset = trigger_block_name_offset + trigger_block_name_length
+        _trigger_condition = buffer[
+            trigger_condition_offset : trigger_condition_offset + trigger_condition_length
+        ]
+        trigger_condition = _trigger_condition.decode("mbcs")
+
+        return cls(
+            header,
+            TriggerConditionStatus(state),
+            trigger_block_name_length,
+            trigger_condition_length,
+            trigger_block_name,
+            trigger_condition,
+        )
+
+    def pack(self) -> bytes:
+        return (
+            self.header.pack()
+            + self._FORMAT.pack(
+                self.state,
+                self.trigger_block_name_length,
+                self.trigger_condition_length,
+            )
+            + self.trigger_block_name.encode("mbcs")
+            + self.trigger_condition.encode("mbcs")
         )

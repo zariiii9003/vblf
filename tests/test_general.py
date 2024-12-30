@@ -7,6 +7,7 @@ from blf.constants import (
     ObjFlags,
     ObjType,
     SysVarType,
+    TriggerConditionStatus,
     TriggerFlag,
 )
 from blf.general import (
@@ -20,6 +21,7 @@ from blf.general import (
     GlobalMarker,
     RealTimeClock,
     SystemVariable,
+    TriggerCondition,
 )
 from tests import DATA_DIR
 
@@ -440,4 +442,24 @@ def test_function_bus():
     assert obj.data_length == 21
     assert obj.name == "functionBusObjectName"
     assert obj.data == b"functionBusObjectData"
+    assert obj.pack() == raw
+
+
+def test_trigger_condition():
+    raw = (DATA_DIR / "TRIGGER_CONDITION.lobj").read_bytes()
+    obj = TriggerCondition.unpack(raw)
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 3
+    assert obj.header.base.object_size == len(raw)
+    assert obj.header.base.object_type is ObjType.TRIGGER_CONDITION
+    assert obj.header.object_flags is ObjFlags.TIME_TEN_MICS
+    assert obj.header.object_static_size == 12
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 0x22222222222222
+    assert obj.state is TriggerConditionStatus.START
+    assert obj.trigger_block_name_length == 17
+    assert obj.trigger_condition_length == 18
+    assert obj.trigger_block_name == "TriggerBlockName_"
+    assert obj.trigger_condition == "TriggerCondition__"
     assert obj.pack() == raw

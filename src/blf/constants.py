@@ -239,3 +239,10 @@ class FunctionBusType(IntEnum):
     SIGNAL = 1
     SERVICE_FUNCTION = 2
     STATE = 3
+
+
+class TriggerConditionStatus(IntEnum):
+    UNKNOWN = 0
+    START = 1
+    STOP = 2
+    STARTSTOP = 3
