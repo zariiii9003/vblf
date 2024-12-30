@@ -1,7 +1,16 @@
-from blf.constants import AppId, Compression, ObjFlags, ObjTypeEnum, SysVarType, TriggerFlag
+from blf.constants import (
+    AppId,
+    BusType,
+    Compression,
+    ObjFlags,
+    ObjTypeEnum,
+    SysVarType,
+    TriggerFlag,
+)
 from blf.general import (
     AppText,
     AppTrigger,
+    DriverOverrun,
     EnvironmentVariable,
     FileStatistics,
     RealTimeClock,
@@ -333,7 +342,7 @@ def test_real_time_clock():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 48
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.REALTIMECLOCK
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
@@ -341,4 +350,22 @@ def test_real_time_clock():
     assert obj.header.object_time_stamp == 2459565876494606882
     assert obj.time == 1229782938247303441
     assert obj.logging_offset == 2459565876494606882
+    assert obj.pack() == raw
+
+
+def test_driver_overrun():
+    raw = (DATA_DIR / "OVERRUN_ERROR.lobj").read_bytes()
+    obj = DriverOverrun.unpack(raw)
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == len(raw)
+    assert obj.header.base.object_type is ObjTypeEnum.OVERRUN_ERROR
+    assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.bus_type is BusType.CAN
+    assert obj.channel == 8738
+    assert obj.reserved == 13107
     assert obj.pack() == raw

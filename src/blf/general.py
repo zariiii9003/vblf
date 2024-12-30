@@ -4,7 +4,15 @@ from typing import ClassVar, Union
 
 from typing_extensions import Self
 
-from blf.constants import AppId, Compression, ObjFlags, ObjTypeEnum, SysVarType, TriggerFlag
+from blf.constants import (
+    AppId,
+    BusType,
+    Compression,
+    ObjFlags,
+    ObjTypeEnum,
+    SysVarType,
+    TriggerFlag,
+)
 
 
 @dataclass
@@ -601,3 +609,34 @@ class RealTimeClock(ObjectWithHeader):
 
     def pack(self) -> bytes:
         return self.header.pack() + self._FORMAT.pack(self.time, self.logging_offset)
+
+
+@dataclass
+class DriverOverrun(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("IHH")
+    header: ObjectHeader
+    bus_type: BusType
+    channel: int
+    reserved: int
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer, 0)
+        (
+            bus_type,
+            channel,
+            reserved,
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
+        return cls(
+            header,
+            BusType(bus_type),
+            channel,
+            reserved,
+        )
+
+    def pack(self) -> bytes:
+        return self.header.pack() + self._FORMAT.pack(
+            self.bus_type,
+            self.channel,
+            self.reserved,
+        )

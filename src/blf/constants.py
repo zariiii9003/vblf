@@ -213,3 +213,14 @@ class SysVarType(IntEnum):
     LONGARRAY = 5
     LONGLONG = 6
     BYTEARRAY = 7
+
+
+class BusType(IntEnum):
+    CAN = 1
+    LIN = 5
+    MOST = 6
+    FLEXRAY = 7
+    J1708 = 9
+    ETHERNET = 10
+    WLAN = 13
+    AFDX = 14

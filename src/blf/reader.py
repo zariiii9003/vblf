@@ -25,6 +25,7 @@ from blf.constants import OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjTypeEnum
 from blf.general import (
     AppText,
     AppTrigger,
+    DriverOverrun,
     EnvironmentVariable,
     FileStatistics,
     LogContainer,
@@ -220,7 +221,7 @@ OBJ_MAP: Final[dict[ObjTypeEnum, Optional[type[ObjectWithHeader]]]] = {
     ObjTypeEnum.LIN_SHORT_OR_SLOW_RESPONSE: None,
     ObjTypeEnum.LIN_DISTURBANCE_EVENT: None,
     ObjTypeEnum.SERIAL_EVENT: None,
-    ObjTypeEnum.OVERRUN_ERROR: None,
+    ObjTypeEnum.OVERRUN_ERROR: DriverOverrun,
     ObjTypeEnum.EVENT_COMMENT: None,
     ObjTypeEnum.WLAN_FRAME: None,
     ObjTypeEnum.WLAN_STATISTIC: None,
