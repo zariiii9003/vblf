@@ -3,6 +3,7 @@ from blf.constants import (
     AppTextSource,
     BusType,
     Compression,
+    FunctionBusType,
     ObjFlags,
     ObjType,
     SysVarType,
@@ -15,6 +16,7 @@ from blf.general import (
     EnvironmentVariable,
     EventComment,
     FileStatistics,
+    FunctionBus,
     GlobalMarker,
     RealTimeClock,
     SystemVariable,
@@ -417,4 +419,25 @@ def test_global_marker():
     assert obj.group_name == "xyz"
     assert obj.marker_name == "xyz"
     assert obj.description == "xyz"
+    assert obj.pack() == raw
+
+
+def test_function_bus():
+    raw = (DATA_DIR / "FUNCTION_BUS.lobj").read_bytes()
+    obj = FunctionBus.unpack(raw)
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 3
+    assert obj.header.base.object_size == len(raw)
+    assert obj.header.base.object_type is ObjType.FUNCTION_BUS
+    assert obj.header.object_flags is ObjFlags.TIME_TEN_MICS
+    assert obj.header.object_static_size == 16
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 0x22222222222222
+    assert obj.object_type is FunctionBusType.SIGNAL
+    assert obj.ve_type == 0x11111111
+    assert obj.name_length == 21
+    assert obj.data_length == 21
+    assert obj.name == "functionBusObjectName"
+    assert obj.data == b"functionBusObjectData"
     assert obj.pack() == raw

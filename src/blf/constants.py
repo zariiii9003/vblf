@@ -232,3 +232,10 @@ class AppTextSource(IntEnum):
     METADATA = 2
     ATTACHMENT = 3
     TRACELINE = 4
+
+
+class FunctionBusType(IntEnum):
+    UNDEFINED = 0
+    SIGNAL = 1
+    SERVICE_FUNCTION = 2
+    STATE = 3

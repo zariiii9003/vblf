@@ -9,6 +9,7 @@ from blf.constants import (
     AppTextSource,
     BusType,
     Compression,
+    FunctionBusType,
     ObjFlags,
     ObjType,
     SysVarType,
@@ -774,4 +775,58 @@ class GlobalMarker(ObjectWithHeader):
             + self.group_name.encode("mbcs")
             + self.marker_name.encode("mbcs")
             + self.description.encode("mbcs")
+        )
+
+
+@dataclass
+class FunctionBus(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIII")
+    header: VarObjectHeader
+    object_type: FunctionBusType
+    ve_type: int
+    name_length: int
+    data_length: int
+    name: str
+    data: bytes
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = VarObjectHeader.unpack_from(buffer, 0)
+        (
+            object_type,
+            ve_type,
+            name_length,
+            data_length,
+        ) = cls._FORMAT.unpack_from(buffer, VarObjectHeader.SIZE)
+
+        # get name
+        name_offset = ObjectHeader.SIZE + cls._FORMAT.size
+        _name = buffer[name_offset : name_offset + name_length]
+        name = _name.decode("mbcs")
+
+        # get data
+        data_offset = name_offset + name_length
+        data = buffer[data_offset : data_offset + data_length]
+
+        return cls(
+            header,
+            FunctionBusType(object_type),
+            ve_type,
+            name_length,
+            data_length,
+            name,
+            data,
+        )
+
+    def pack(self) -> bytes:
+        return (
+            self.header.pack()
+            + self._FORMAT.pack(
+                self.object_type,
+                self.ve_type,
+                self.name_length,
+                self.data_length,
+            )
+            + self.name.encode("mbcs")
+            + self.data
         )
