@@ -684,3 +684,94 @@ class EventComment(ObjectWithHeader):
         text_offset = ObjectHeader.SIZE + self._FORMAT.size
         buffer[text_offset : text_offset + self.text_length] = encoded_text
         return bytes(buffer)
+
+
+@dataclass
+class GlobalMarker(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIIBBHIIIIQ")
+    header: ObjectHeader
+    commented_event_type: int
+    foreground_color: int
+    background_color: int
+    is_relocatable: int
+    reserved1: int
+    reserved2: int
+    group_name_length: int
+    marker_name_length: int
+    description_length: int
+    reserved3: int
+    reserved4: int
+    group_name: str
+    marker_name: str
+    description: str
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer, 0)
+        (
+            commented_event_type,
+            foreground_color,
+            background_color,
+            is_relocatable,
+            reserved1,
+            reserved2,
+            group_name_length,
+            marker_name_length,
+            description_length,
+            reserved3,
+            reserved4,
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
+
+        # get group_name
+        group_name_offset = ObjectHeader.SIZE + cls._FORMAT.size
+        _group_name = buffer[group_name_offset : group_name_offset + group_name_length]
+        group_name = _group_name.decode("mbcs")
+
+        # get marker_name
+        marker_name_offset = group_name_offset + group_name_length
+        _marker_name = buffer[marker_name_offset : marker_name_offset + marker_name_length]
+        marker_name = _marker_name.decode("mbcs")
+
+        # get marker_name
+        description_offset = marker_name_offset + marker_name_length
+        _description = buffer[description_offset : description_offset + description_length]
+        description = _description.decode("mbcs")
+
+        return cls(
+            header,
+            commented_event_type,
+            foreground_color,
+            background_color,
+            is_relocatable,
+            reserved1,
+            reserved2,
+            group_name_length,
+            marker_name_length,
+            description_length,
+            reserved3,
+            reserved4,
+            group_name,
+            marker_name,
+            description,
+        )
+
+    def pack(self) -> bytes:
+        return (
+            self.header.pack()
+            + self._FORMAT.pack(
+                self.commented_event_type,
+                self.foreground_color,
+                self.background_color,
+                self.is_relocatable,
+                self.reserved1,
+                self.reserved2,
+                self.group_name_length,
+                self.marker_name_length,
+                self.description_length,
+                self.reserved3,
+                self.reserved4,
+            )
+            + self.group_name.encode("mbcs")
+            + self.marker_name.encode("mbcs")
+            + self.description.encode("mbcs")
+        )

@@ -15,6 +15,7 @@ from blf.general import (
     EnvironmentVariable,
     EventComment,
     FileStatistics,
+    GlobalMarker,
     RealTimeClock,
     SystemVariable,
 )
@@ -389,4 +390,31 @@ def test_event_comment():
     assert obj.text_length == 3
     assert obj.reserved == 0
     assert obj.text == "xyz"
+    assert obj.pack() == raw
+
+
+def test_global_marker():
+    raw = (DATA_DIR / "GLOBAL_MARKER.lobj").read_bytes()
+    obj = GlobalMarker.unpack(raw)
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == len(raw)
+    assert obj.header.base.object_type is ObjTypeEnum.GLOBAL_MARKER
+    assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.commented_event_type == 286331153
+    assert obj.foreground_color == 572662306
+    assert obj.background_color == 858993459
+    assert obj.is_relocatable == 68
+    assert obj.reserved1 == 0
+    assert obj.reserved2 == 0
+    assert obj.group_name_length == 3
+    assert obj.marker_name_length == 3
+    assert obj.description_length == 3
+    assert obj.group_name == "xyz"
+    assert obj.marker_name == "xyz"
+    assert obj.description == "xyz"
     assert obj.pack() == raw
