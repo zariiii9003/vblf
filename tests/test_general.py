@@ -33,7 +33,7 @@ def test_file_statistics():
     assert obj.application_major == 12
     assert obj.application_minor == 0
     assert obj.file_size == 24763512
-    assert obj.uncompressed_file_size == 0x557CAB7
+    assert obj.uncompressed_file_size == 89639607
     assert obj.object_count == 923421
     assert obj.application_build == 101
     assert obj.measurement_start_time.year == 2024
@@ -67,7 +67,7 @@ def test_app_text():
     assert obj.header.object_version == 0
     assert obj.header.object_time_stamp == 0
     assert obj.source is AppTextSource.DBCHANNELINFO
-    assert obj.reserved1 == 16843009
+    assert obj.reserved1 == 0x01010101
     assert obj.text_length == 49
     assert obj.reserved2 == 0
     assert obj.text == "C:\\Users\\user\\Desktop\\project car\\myDatabase.dbc"
@@ -83,14 +83,14 @@ def test_app_trigger():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.APP_TRIGGER
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.pre_trigger_time == 1229782938247303441
-    assert obj.post_trigger_time == 2459565876494606882
-    assert obj.channel == 13107
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.pre_trigger_time == 0x1111111111111111
+    assert obj.post_trigger_time == 0x2222222222222222
+    assert obj.channel == 0x3333
     assert obj.flags == TriggerFlag.SINGLE_TRIGGER
-    assert obj.app_specific == 1145324612
+    assert obj.app_specific == 0x44444444
     assert obj.pack() == raw
 
 
@@ -103,9 +103,9 @@ def test_environment_variable_integer():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.ENV_INTEGER
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.name_length == 3
     assert obj.data_length == 4
     assert obj.reserved == 0
@@ -123,9 +123,9 @@ def test_environment_variable_double():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.ENV_DOUBLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.name_length == 3
     assert obj.data_length == 8
     assert obj.reserved == 0
@@ -143,9 +143,9 @@ def test_environment_variable_string():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.ENV_STRING
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.name_length == 3
     assert obj.data_length == 3
     assert obj.reserved == 0
@@ -163,9 +163,9 @@ def test_environment_variable_data():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.ENV_DATA
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.name_length == 3
     assert obj.data_length == 3
     assert obj.reserved == 0
@@ -183,11 +183,11 @@ def test_system_variable_double():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.type is SysVarType.DOUBLE
-    assert obj.representation == 572662306
+    assert obj.representation == 0x22222222
     assert obj.reserved1 == 0x4444444433333333
     assert obj.name_length == 3
     assert obj.data_length == 8
@@ -206,11 +206,11 @@ def test_system_variable_long():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.type is SysVarType.LONG
-    assert obj.representation == 572662306
+    assert obj.representation == 0x22222222
     assert obj.reserved1 == 0x4444444433333333
     assert obj.name_length == 3
     assert obj.data_length == 4
@@ -229,11 +229,11 @@ def test_system_variable_string():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.type is SysVarType.STRING
-    assert obj.representation == 572662306
+    assert obj.representation == 0x22222222
     assert obj.reserved1 == 0x4444444433333333
     assert obj.name_length == 3
     assert obj.data_length == 3
@@ -252,11 +252,11 @@ def test_system_variable_double_array():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.type is SysVarType.DOUBLEARRAY
-    assert obj.representation == 572662306
+    assert obj.representation == 0x22222222
     assert obj.reserved1 == 0x4444444433333333
     assert obj.name_length == 3
     assert obj.data_length == 24
@@ -279,11 +279,11 @@ def test_system_variable_long_array():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.type is SysVarType.LONGARRAY
-    assert obj.representation == 572662306
+    assert obj.representation == 0x22222222
     assert obj.reserved1 == 0x4444444433333333
     assert obj.name_length == 3
     assert obj.data_length == 12
@@ -302,11 +302,11 @@ def test_system_variable_longlong():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.type is SysVarType.LONGLONG
-    assert obj.representation == 572662306
+    assert obj.representation == 0x22222222
     assert obj.reserved1 == 0x4444444433333333
     assert obj.name_length == 3
     assert obj.data_length == 8
@@ -325,11 +325,11 @@ def test_system_variable_bytearray():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.type is SysVarType.BYTEARRAY
-    assert obj.representation == 572662306
+    assert obj.representation == 0x22222222
     assert obj.reserved1 == 0x4444444433333333
     assert obj.name_length == 3
     assert obj.data_length == 3
@@ -348,11 +348,11 @@ def test_real_time_clock():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.REALTIMECLOCK
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.time == 1229782938247303441
-    assert obj.logging_offset == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.time == 0x1111111111111111
+    assert obj.logging_offset == 0x2222222222222222
     assert obj.pack() == raw
 
 
@@ -365,12 +365,12 @@ def test_driver_overrun():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.OVERRUN_ERROR
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.header.object_time_stamp == 0x2222222222222222
     assert obj.bus_type is BusType.CAN
-    assert obj.channel == 8738
-    assert obj.reserved == 13107
+    assert obj.channel == 0x2222
+    assert obj.reserved == 0x3333
     assert obj.pack() == raw
 
 
@@ -383,10 +383,10 @@ def test_event_comment():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.EVENT_COMMENT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.commented_event_type == 286331153
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.commented_event_type == 0x11111111
     assert obj.text_length == 3
     assert obj.reserved == 0
     assert obj.text == "xyz"
@@ -402,13 +402,13 @@ def test_global_marker():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.GLOBAL_MARKER
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.commented_event_type == 286331153
-    assert obj.foreground_color == 572662306
-    assert obj.background_color == 858993459
-    assert obj.is_relocatable == 68
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.commented_event_type == 0x11111111
+    assert obj.foreground_color == 0x22222222
+    assert obj.background_color == 0x33333333
+    assert obj.is_relocatable == 0x44
     assert obj.reserved1 == 0
     assert obj.reserved2 == 0
     assert obj.group_name_length == 3

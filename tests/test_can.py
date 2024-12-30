@@ -26,13 +26,13 @@ def test_can_message():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_MESSAGE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.channel == 4369
-    assert obj.flags == 34
-    assert obj.dlc == 51
-    assert obj.frame_id == 1145324612
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.channel == 0x1111
+    assert obj.flags == 0x22
+    assert obj.dlc == 0x33
+    assert obj.frame_id == 0x44444444
     assert obj.data == bytes([0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC])
     assert obj.pack() == raw
 
@@ -46,18 +46,18 @@ def test_can_message2():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_MESSAGE2
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.channel == 4369
-    assert obj.flags == 34
-    assert obj.dlc == 51
-    assert obj.frame_id == 1145324612
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.channel == 0x1111
+    assert obj.flags == 0x22
+    assert obj.dlc == 0x33
+    assert obj.frame_id == 0x44444444
     assert obj.data == b"\x55\x66\x77\x88\x99\xaa\xbb\xcc"
-    assert obj.frame_length == 3722304989
-    assert obj.bit_count == 238
-    assert obj.reserved1 == 255
-    assert obj.reserved2 == 4369
+    assert obj.frame_length == 0xDDDDDDDD
+    assert obj.bit_count == 0xEE
+    assert obj.reserved1 == 0xFF
+    assert obj.reserved2 == 0x1111
     assert obj.pack() == raw
 
 
@@ -70,18 +70,19 @@ def test_canfd_message():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_MESSAGE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.channel == 4369
-    assert obj.dlc == 51
-    assert obj.frame_id == 1145324612
-    assert obj.frame_length == 1431655765
-    assert obj.arb_bit_count == 102
-    assert obj.canfd_flags == 119
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.channel == 0x1111
+    assert obj.flags == 0x22
+    assert obj.dlc == 0x33
+    assert obj.frame_id == 0x44444444
+    assert obj.frame_length == 0x55555555
+    assert obj.arb_bit_count == 0x66
+    assert obj.canfd_flags == 0x77
     assert obj.valid_data_bytes == 64
-    assert obj.reserved1 == 153
-    assert obj.reserved2 == 2863311530
+    assert obj.reserved1 == 0x99
+    assert obj.reserved2 == 0xAAAAAAAA
     assert obj.data == bytes(range(64))
     assert obj.reserved3 == 0
     assert obj.pack() == raw
@@ -103,12 +104,12 @@ def test_canfd_message64():
     assert obj.dlc == 8
     assert obj.valid_data_bytes == 8
     assert obj.tx_count == 0
-    assert obj.frame_id == 168
+    assert obj.frame_id == 0xA8
     assert obj.frame_length == 104238
     assert obj.flags == 3158016
     assert isinstance(obj.flags, CanFdFlags)
-    assert obj.btr_cfg_arb == 1179648592
-    assert obj.btr_cfg_data == 1260912976
+    assert obj.btr_cfg_arb == 0x46500250
+    assert obj.btr_cfg_data == 0x4B280150
     assert obj.time_offset_brs_ns == 68863
     assert obj.time_offset_crc_del_ns == 16638
     assert obj.bit_count == 134
@@ -116,8 +117,8 @@ def test_canfd_message64():
     assert obj.ext_data_offset == 80
     assert obj.crc == 2147501637
     assert obj.data == b"\xb8\xda\x1f\x80\xff\x00\x00\x00"
-    assert obj.btr_ext_arb == 536942390
-    assert obj.btr_ext_data == 536873244
+    assert obj.btr_ext_arb == 0x20011736
+    assert obj.btr_ext_data == 0x2000091C
     assert obj.pack() == raw
 
 
@@ -173,15 +174,15 @@ def test_can_driver_error_ext():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_ERROR_EXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.channel == 4369
-    assert obj.tx_errors == 34
-    assert obj.rx_errors == 51
-    assert obj.error_code == 1145324612
-    assert obj.flags == 1431655765
-    assert obj.state == 102
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.channel == 0x1111
+    assert obj.tx_errors == 0x22
+    assert obj.rx_errors == 0x33
+    assert obj.error_code == 0x44444444
+    assert obj.flags == 0x55555555
+    assert obj.state == 0x66
     assert obj.pack() == raw
 
 
@@ -194,11 +195,11 @@ def test_can_error_frame():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_ERROR
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.channel == 4369
-    assert obj.length == 8738
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.channel == 0x1111
+    assert obj.length == 0x2222
     assert obj.reserved == 0
     assert obj.pack() == raw
 
@@ -212,20 +213,20 @@ def test_can_error_frame_ext():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_ERROR_EXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.channel == 4369
-    assert obj.length == 8738
-    assert obj.flags == 858993459
-    assert obj.ecc == 68
-    assert obj.position == 85
-    assert obj.dlc == 102
-    assert obj.reserved1 == 119
-    assert obj.frame_length_in_ns == 2290649224
-    assert obj.frame_id == 2576980377
-    assert obj.flags_ext == 43690
-    assert obj.reserved2 == 48059
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.channel == 0x1111
+    assert obj.length == 0x2222
+    assert obj.flags == 0x33333333
+    assert obj.ecc == 0x44
+    assert obj.position == 0x55
+    assert obj.dlc == 0x66
+    assert obj.reserved1 == 0x77
+    assert obj.frame_length_in_ns == 0x88888888
+    assert obj.frame_id == 0x99999999
+    assert obj.flags_ext == 0xAAAA
+    assert obj.reserved2 == 0xBBBB
     assert obj.data == b"\xcc\xdd\xee\xff\x11\x22\x33\x44"
     assert obj.pack() == raw
 
@@ -239,30 +240,30 @@ def test_canfd_error_frame64():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_ERROR_64
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.channel == 17
-    assert obj.dlc == 34
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.channel == 0x11
+    assert obj.dlc == 0x22
     assert obj.valid_data_bytes == 64
-    assert obj.ecc == 68
-    assert obj.flags == 21845
-    assert obj.error_code_ext == 26214
-    assert obj.ext_flags == 30583
+    assert obj.ecc == 0x44
+    assert obj.flags == 0x5555
+    assert obj.error_code_ext == 0x6666
+    assert obj.ext_flags == 0x7777
     assert obj.ext_data_offset == 140
-    assert obj.reserved1 == 153
-    assert obj.frame_id == 2863311530
-    assert obj.frame_length == 3149642683
-    assert obj.btr_cfg_arb == 3435973836
-    assert obj.btr_cfg_data == 3722304989
-    assert obj.time_offset_brs_ns == 4008636142
-    assert obj.time_offset_crc_del_ns == 4294967295
-    assert obj.crc == 286331153
-    assert obj.error_position == 8738
-    assert obj.reserved2 == 13107
+    assert obj.reserved1 == 0x99
+    assert obj.frame_id == 0xAAAAAAAA
+    assert obj.frame_length == 0xBBBBBBBB
+    assert obj.btr_cfg_arb == 0xCCCCCCCC
+    assert obj.btr_cfg_data == 0xDDDDDDDD
+    assert obj.time_offset_brs_ns == 0xEEEEEEEE
+    assert obj.time_offset_crc_del_ns == 0xFFFFFFFF
+    assert obj.crc == 0x11111111
+    assert obj.error_position == 0x2222
+    assert obj.reserved2 == 0x3333
     assert obj.data == bytes(range(64))
-    assert obj.btr_ext_arb == 286331153
-    assert obj.btr_ext_data == 572662306
+    assert obj.btr_ext_arb == 0x11111111
+    assert obj.btr_ext_data == 0x22222222
     assert obj.pack() == raw
 
 
@@ -275,12 +276,12 @@ def test_can_driver_hw_sync():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_SYNC
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.channel == 4369
-    assert obj.flags == 34
-    assert obj.reserved1 == 51
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.channel == 0x1111
+    assert obj.flags == 0x22
+    assert obj.reserved1 == 0x33
     assert obj.reserved2 == 0
     assert obj.pack() == raw
 
@@ -294,10 +295,10 @@ def test_can_overload_frame():
     assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_OVERLOAD
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
-    assert obj.header.client_index == 4369
+    assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
-    assert obj.header.object_time_stamp == 2459565876494606882
-    assert obj.channel == 4369
-    assert obj.reserved1 == 8738
+    assert obj.header.object_time_stamp == 0x2222222222222222
+    assert obj.channel == 0x1111
+    assert obj.reserved1 == 0x2222
     assert obj.reserved2 == 0
     assert obj.pack() == raw
