@@ -640,3 +640,46 @@ class DriverOverrun(ObjectWithHeader):
             self.channel,
             self.reserved,
         )
+
+
+@dataclass
+class EventComment(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIQ")
+    header: ObjectHeader
+    commented_event_type: int
+    text_length: int
+    reserved: int
+    text: str
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer)
+        (
+            commented_event_type,
+            text_length,
+            reserved,
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
+        text_offset = ObjectHeader.SIZE + cls._FORMAT.size
+        text = buffer[text_offset : text_offset + text_length].decode("mbcs")
+        return cls(
+            header,
+            commented_event_type,
+            text_length,
+            reserved,
+            text,
+        )
+
+    def pack(self) -> bytes:
+        buffer = bytearray(self.header.base.object_size)
+        self.header.pack_into(buffer, 0)
+        self._FORMAT.pack_into(
+            buffer,
+            ObjectHeader.SIZE,
+            self.commented_event_type,
+            self.text_length,
+            self.reserved,
+        )
+        encoded_text = self.text.encode("mbcs")
+        text_offset = ObjectHeader.SIZE + self._FORMAT.size
+        buffer[text_offset : text_offset + self.text_length] = encoded_text
+        return bytes(buffer)

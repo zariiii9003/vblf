@@ -12,6 +12,7 @@ from blf.general import (
     AppTrigger,
     DriverOverrun,
     EnvironmentVariable,
+    EventComment,
     FileStatistics,
     RealTimeClock,
     SystemVariable,
@@ -368,4 +369,23 @@ def test_driver_overrun():
     assert obj.bus_type is BusType.CAN
     assert obj.channel == 8738
     assert obj.reserved == 13107
+    assert obj.pack() == raw
+
+
+def test_event_comment():
+    raw = (DATA_DIR / "EVENT_COMMENT.lobj").read_bytes()
+    obj = EventComment.unpack(raw)
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == len(raw)
+    assert obj.header.base.object_type is ObjTypeEnum.EVENT_COMMENT
+    assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.commented_event_type == 286331153
+    assert obj.text_length == 3
+    assert obj.reserved == 0
+    assert obj.text == "xyz"
     assert obj.pack() == raw
