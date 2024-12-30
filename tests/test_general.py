@@ -1,5 +1,5 @@
 from blf.constants import AppId, Compression, ObjFlags, ObjTypeEnum, TriggerFlag
-from blf.general import AppText, AppTrigger, EnvironmentVariable, FileStatistics
+from blf.general import AppText, AppTrigger, EnvironmentVariable, FileStatistics, RealTimeClock
 from tests import DATA_DIR
 
 
@@ -152,4 +152,21 @@ def test_environment_variable_data():
     assert obj.reserved == 0
     assert obj.name == "xyz"
     assert obj.data == b"\x01\x02\x03"
+    assert obj.pack() == raw
+
+
+def test_real_time_clock():
+    raw = (DATA_DIR / "REALTIMECLOCK.lobj").read_bytes()
+    obj = RealTimeClock.unpack(raw)
+    assert obj.header.base.signature == b"LOBJ"
+    assert obj.header.base.header_size == 32
+    assert obj.header.base.header_version == 1
+    assert obj.header.base.object_size == 48
+    assert obj.header.base.object_type is ObjTypeEnum.REALTIMECLOCK
+    assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
+    assert obj.header.client_index == 4369
+    assert obj.header.object_version == 0
+    assert obj.header.object_time_stamp == 2459565876494606882
+    assert obj.time == 1229782938247303441
+    assert obj.logging_offset == 2459565876494606882
     assert obj.pack() == raw

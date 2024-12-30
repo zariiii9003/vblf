@@ -509,3 +509,20 @@ class EnvironmentVariable(ObjectWithHeader):
         buffer[data_offset : data_offset + self.data_length] = self.data
 
         return bytes(buffer)
+
+
+@dataclass
+class RealTimeClock(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("QQ")
+    header: ObjectHeader
+    time: int
+    logging_offset: int
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer, 0)
+        time, logging_offset = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        return cls(header, time, logging_offset)
+
+    def pack(self) -> bytes:
+        return self.header.pack() + self._FORMAT.pack(self.time, self.logging_offset)
