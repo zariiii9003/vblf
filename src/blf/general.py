@@ -252,6 +252,21 @@ class ObjectWithHeader:
 
 
 @dataclass
+class NotImplementedObject(ObjectWithHeader):
+    header: HeaderWithBase
+    buffer: bytes
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        base = ObjectHeaderBase.unpack_from(buffer, 0)
+        header = HeaderWithBase(base)
+        return cls(header, buffer)
+
+    def pack(self) -> bytes:
+        return self.buffer
+
+
+@dataclass
 class FileStatistics:
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("4sIIBBBBQQII32xQ64s")
     SIZE: ClassVar[int] = _FORMAT.size

@@ -28,6 +28,7 @@ from blf.general import (
     EnvironmentVariable,
     FileStatistics,
     LogContainer,
+    NotImplementedObject,
     ObjectHeaderBase,
     ObjectWithHeader,
 )
@@ -60,6 +61,7 @@ class BlfReader(AbstractContextManager["BlfReader"]):
 
     def _generate_objects(self, stream: BinaryIO) -> Iterator[ObjectWithHeader]:
         while True:
+            # find start of next object (search for b"LOBJ")
             signature = stream.read(OBJ_SIGNATURE_SIZE)
             if len(signature) != OBJ_SIGNATURE_SIZE:
                 self._incomplete_data = signature
@@ -69,13 +71,15 @@ class BlfReader(AbstractContextManager["BlfReader"]):
                 stream.seek(1 - OBJ_SIGNATURE_SIZE, os.SEEK_CUR)
                 continue
 
+            # parse base header of object
             header_base_data = signature + stream.read(ObjectHeaderBase.SIZE - OBJ_SIGNATURE_SIZE)
             if len(header_base_data) < ObjectHeaderBase.SIZE:
                 self._incomplete_data = header_base_data
                 break
+            else:
+                header_base = ObjectHeaderBase.unpack(header_base_data)
 
             # read object data
-            header_base = ObjectHeaderBase.unpack(header_base_data)
             obj_data = header_base_data + stream.read(
                 header_base.object_size - ObjectHeaderBase.SIZE
             )
@@ -83,11 +87,10 @@ class BlfReader(AbstractContextManager["BlfReader"]):
                 self._incomplete_data = obj_data
                 break
 
-            # interpret object data
-            obj_class = OBJ_MAP.get(header_base.object_type)
-            if not obj_class:
-                LOG.info("BLF object type '%s' is not implemented.", header_base.object_type)
-                continue
+            # find class for given object_type
+            obj_class: type[ObjectWithHeader] = (
+                OBJ_MAP.get(header_base.object_type) or NotImplementedObject
+            )
 
             if obj_class is LogContainer:
                 # decompress data
