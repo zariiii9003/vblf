@@ -32,6 +32,7 @@ from blf.general import (
     ObjectHeaderBase,
     ObjectWithHeader,
     RealTimeClock,
+    SystemVariable,
 )
 
 LOG = logging.getLogger("blf")
@@ -200,7 +201,7 @@ OBJ_MAP: Final[dict[ObjTypeEnum, Optional[type[ObjectWithHeader]]]] = {
     ObjTypeEnum.MOST_ALLOCTAB: None,
     ObjTypeEnum.MOST_STRESS: None,
     ObjTypeEnum.ETHERNET_FRAME: None,
-    ObjTypeEnum.SYS_VARIABLE: None,
+    ObjTypeEnum.SYS_VARIABLE: SystemVariable,
     ObjTypeEnum.CAN_ERROR_EXT: CanErrorFrameExt,
     ObjTypeEnum.CAN_DRIVER_ERROR_EXT: CanDriverErrorExt,
     ObjTypeEnum.LIN_LONG_DOM_SIG2: None,
