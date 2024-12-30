@@ -55,7 +55,7 @@ class BlfReader(AbstractContextManager["BlfReader"]):
             err_msg = "Unexpected file format"
             raise ValueError(err_msg)
 
-        self.file_statistics = FileStatistics.unpack(self._file.read(FileStatistics.SIZE))
+        self.file_statistics = FileStatistics.unpack(obj_data)
 
         self._incomplete_data: bytes = b""
         self._generator = self._generate_objects(self._file)
