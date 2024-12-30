@@ -203,3 +203,13 @@ class CanFdFlags(IntFlag):
     FRAME_PART_OF_BURST = 0x20000
     SINGLE_SHOT_MODE_NOT_TRANSMITTED = 0x40000
     SINGLE_SHOT_MODE_REASON = 0x80000  # 0 = arbitration lost, 1 = frame disturbed
+
+
+class SysVarType(IntEnum):
+    DOUBLE = 1
+    LONG = 2
+    STRING = 3
+    DOUBLEARRAY = 4
+    LONGARRAY = 5
+    LONGLONG = 6
+    BYTEARRAY = 7

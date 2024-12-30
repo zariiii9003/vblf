@@ -4,7 +4,7 @@ from typing import ClassVar, Union
 
 from typing_extensions import Self
 
-from blf.constants import AppId, Compression, ObjFlags, ObjTypeEnum, TriggerFlag
+from blf.constants import AppId, Compression, ObjFlags, ObjTypeEnum, SysVarType, TriggerFlag
 
 
 @dataclass
@@ -107,6 +107,7 @@ class HeaderWithBase:
 @dataclass
 class VarObjectHeader(HeaderWithBase):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IHHQ")
+    SIZE: ClassVar[int] = ObjectHeaderBase.SIZE + _FORMAT.size
     object_flags: int
     object_static_size: int
     object_version: int
@@ -169,6 +170,7 @@ class VarObjectHeader(HeaderWithBase):
 @dataclass
 class ObjectHeader(HeaderWithBase):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IHHQ")
+    SIZE: ClassVar[int] = ObjectHeaderBase.SIZE + _FORMAT.size
     object_flags: int
     client_index: int
     object_version: int
@@ -230,7 +232,8 @@ class ObjectHeader(HeaderWithBase):
 
 # @dataclass
 # class ObjectHeader2(ObjectHeaderBase):
-#     _FORMAT: ClassVar[struct.Struct] = struct.Struct(ObjectHeaderBase._FORMAT.format + "IBBHQQ")
+#     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IBBHQQ")
+#     SIZE: ClassVar[int] = ObjectHeaderBase.SIZE + _FORMAT.size
 #     object_flags: int
 #     time_stamp_status: int
 #     reserved1: int
@@ -359,7 +362,7 @@ class LogContainer(ObjectWithHeader):
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
         header = ObjectHeader.unpack_from(buffer)
-        return cls(header, buffer[header.base.header_size :])
+        return cls(header, buffer[ObjectHeader.SIZE :])
 
     def pack(self) -> bytes:
         return self.header.pack() + self.data
@@ -383,8 +386,8 @@ class AppText(ObjectWithHeader):
             reserved1,
             text_length,
             reserved2,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
-        text_offset = header.base.header_size + cls._FORMAT.size
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
+        text_offset = ObjectHeader.SIZE + cls._FORMAT.size
         text = buffer[text_offset : text_offset + text_length - 1].decode("mbcs")
         return cls(
             header,
@@ -400,14 +403,14 @@ class AppText(ObjectWithHeader):
         self.header.pack_into(buffer, 0)
         self._FORMAT.pack_into(
             buffer,
-            self.header.base.header_size,
+            ObjectHeader.SIZE,
             self.source,
             self.reserved1,
             self.text_length,
             self.reserved2,
         )
         encoded_text = self.text.encode("mbcs") + b"\x00"
-        text_offset = self.header.base.header_size + self._FORMAT.size
+        text_offset = ObjectHeader.SIZE + self._FORMAT.size
         buffer[text_offset : text_offset + self.text_length] = encoded_text
         return bytes(buffer)
 
@@ -431,7 +434,7 @@ class AppTrigger(ObjectWithHeader):
             channel,
             flags,
             app_specific,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(
             header,
             pre_trigger_time,
@@ -464,12 +467,10 @@ class EnvironmentVariable(ObjectWithHeader):
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
         header = ObjectHeader.unpack_from(buffer, 0)
-        (name_length, data_length, reserved) = cls._FORMAT.unpack_from(
-            buffer, header.base.header_size
-        )
+        (name_length, data_length, reserved) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
 
         # get name
-        name_offset = header.base.header_size + cls._FORMAT.size
+        name_offset = ObjectHeader.SIZE + cls._FORMAT.size
         name = buffer[name_offset : name_offset + name_length].decode("mbcs")
 
         # get data
@@ -494,14 +495,88 @@ class EnvironmentVariable(ObjectWithHeader):
         # write fixed size values
         self._FORMAT.pack_into(
             buffer,
-            self.header.base.header_size,
+            ObjectHeader.SIZE,
             self.name_length,
             self.data_length,
             self.reserved,
         )
 
         # write name
-        name_offset = self.header.base.header_size + self._FORMAT.size
+        name_offset = ObjectHeader.SIZE + self._FORMAT.size
+        buffer[name_offset : name_offset + self.name_length] = self.name.encode("mbcs")
+
+        # write data
+        data_offset = name_offset + self.name_length
+        buffer[data_offset : data_offset + self.data_length] = self.data
+
+        return bytes(buffer)
+
+
+@dataclass
+class SystemVariable(ObjectWithHeader):
+    _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIQIIQ")
+    header: ObjectHeader
+    type: SysVarType
+    representation: int
+    reserved1: int
+    name_length: int
+    data_length: int
+    reserved2: int
+    name: str
+    data: bytes
+
+    @classmethod
+    def unpack(cls, buffer: bytes) -> Self:
+        header = ObjectHeader.unpack_from(buffer, 0)
+        (
+            type_,
+            representation,
+            reserved1,
+            name_length,
+            data_length,
+            reserved2,
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
+
+        # get name
+        name_offset = ObjectHeader.SIZE + cls._FORMAT.size
+        name = buffer[name_offset : name_offset + name_length].decode("mbcs")
+
+        # get data
+        data_offset = name_offset + name_length
+        data = buffer[data_offset : data_offset + data_length]
+
+        return cls(
+            header,
+            SysVarType(type_),
+            representation,
+            reserved1,
+            name_length,
+            data_length,
+            reserved2,
+            name,
+            data,
+        )
+
+    def pack(self) -> bytes:
+        buffer = bytearray(self.header.base.object_size)
+
+        # write header
+        self.header.pack_into(buffer, 0)
+
+        # write fixed size values
+        self._FORMAT.pack_into(
+            buffer,
+            ObjectHeader.SIZE,
+            self.type,
+            self.representation,
+            self.reserved1,
+            self.name_length,
+            self.data_length,
+            self.reserved2,
+        )
+
+        # write name
+        name_offset = ObjectHeader.SIZE + self._FORMAT.size
         buffer[name_offset : name_offset + self.name_length] = self.name.encode("mbcs")
 
         # write data
@@ -521,7 +596,7 @@ class RealTimeClock(ObjectWithHeader):
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
         header = ObjectHeader.unpack_from(buffer, 0)
-        time, logging_offset = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        time, logging_offset = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(header, time, logging_offset)
 
     def pack(self) -> bytes:

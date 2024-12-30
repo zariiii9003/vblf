@@ -28,7 +28,7 @@ class CanMessage(ObjectWithHeader):
             dlc,
             frame_id,
             data_,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(
             header,
             channel,
@@ -75,7 +75,7 @@ class CanMessage2(ObjectWithHeader):
             bit_count,
             reserved1,
             reserved2,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(
             header,
             channel,
@@ -136,7 +136,7 @@ class CanFdMessage(ObjectWithHeader):
             reserved2,
             data_,
             reserved3,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(
             header,
             channel,
@@ -214,10 +214,10 @@ class CanFdMessage64(ObjectWithHeader):
             dir,
             ext_data_offset,
             crc,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
 
         # get data
-        data_offset = header.base.header_size + cls._FORMAT.size
+        data_offset = ObjectHeader.SIZE + cls._FORMAT.size
         data = buffer[data_offset : data_offset + valid_data_bytes]
 
         # get ext frame data
@@ -256,7 +256,7 @@ class CanFdMessage64(ObjectWithHeader):
         # pack fixed size values
         self._FORMAT.pack_into(
             buffer,
-            self.header.base.header_size,
+            ObjectHeader.SIZE,
             self.channel,
             self.dlc,
             self.valid_data_bytes,
@@ -275,7 +275,7 @@ class CanFdMessage64(ObjectWithHeader):
         )
 
         # pack data
-        data_offset = self.header.base.header_size + self._FORMAT.size
+        data_offset = ObjectHeader.SIZE + self._FORMAT.size
         buffer[data_offset : data_offset + self.valid_data_bytes] = self.data
 
         # pack ext frame data
@@ -313,7 +313,7 @@ class CanDriverStatistic(ObjectWithHeader):
             error_frames,
             overload_frames,
             reserved,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(
             header,
             channel,
@@ -358,7 +358,7 @@ class CanDriverError(ObjectWithHeader):
             tx_errors,
             rx_errors,
             error_code,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(
             header,
             channel,
@@ -406,7 +406,7 @@ class CanDriverErrorExt(ObjectWithHeader):
             reserved3_1,
             reserved3_2,
             reserved3_3,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(
             header,
             channel,
@@ -448,7 +448,7 @@ class CanErrorFrame(ObjectWithHeader):
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
         header = ObjectHeader.unpack_from(buffer)
-        channel, length, reserved = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        channel, length, reserved = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(header, channel, length, reserved)
 
     def pack(self) -> bytes:
@@ -488,7 +488,7 @@ class CanErrorFrameExt(ObjectWithHeader):
             flags_ext,
             reserved2,
             data,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(
             header,
             channel,
@@ -573,10 +573,10 @@ class CanFdErrorFrame64(ObjectWithHeader):
             crc,
             error_position,
             reserved2,
-        ) = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
 
         # get data
-        data_offset = header.base.header_size + cls._FORMAT.size
+        data_offset = ObjectHeader.SIZE + cls._FORMAT.size
         data = buffer[data_offset : data_offset + valid_data_bytes]
 
         # get ext frame data
@@ -618,7 +618,7 @@ class CanFdErrorFrame64(ObjectWithHeader):
         # pack fixed size values
         self._FORMAT.pack_into(
             buffer,
-            self.header.base.header_size,
+            ObjectHeader.SIZE,
             self.channel,
             self.dlc,
             self.valid_data_bytes,
@@ -640,7 +640,7 @@ class CanFdErrorFrame64(ObjectWithHeader):
         )
 
         # pack data
-        data_offset = self.header.base.header_size + self._FORMAT.size
+        data_offset = ObjectHeader.SIZE + self._FORMAT.size
         buffer[data_offset : data_offset + self.valid_data_bytes] = self.data
 
         # pack ext frame data
@@ -663,9 +663,7 @@ class CanDriverHwSync(ObjectWithHeader):
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
         header = ObjectHeader.unpack_from(buffer)
-        channel, flags, reserved1, reserved2 = cls._FORMAT.unpack_from(
-            buffer, header.base.header_size
-        )
+        channel, flags, reserved1, reserved2 = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(header, channel, flags, reserved1, reserved2)
 
     def pack(self) -> bytes:
@@ -685,7 +683,7 @@ class CanOverloadFrame(ObjectWithHeader):
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
         header = ObjectHeader.unpack_from(buffer)
-        channel, reserved1, reserved2 = cls._FORMAT.unpack_from(buffer, header.base.header_size)
+        channel, reserved1, reserved2 = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         return cls(header, channel, reserved1, reserved2)
 
     def pack(self) -> bytes:

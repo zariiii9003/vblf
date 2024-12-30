@@ -23,7 +23,7 @@ def test_can_message():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 48
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_MESSAGE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
@@ -43,7 +43,7 @@ def test_can_message2():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 56
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_MESSAGE2
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
@@ -67,7 +67,7 @@ def test_canfd_message():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 120
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_MESSAGE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
@@ -93,7 +93,7 @@ def test_canfd_message64():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 88
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_MESSAGE_64
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
@@ -127,7 +127,7 @@ def test_can_driver_statistic():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 64
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_STATISTIC
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
@@ -151,7 +151,7 @@ def test_can_driver_error():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 40
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_ERROR
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
@@ -170,7 +170,7 @@ def test_can_driver_error_ext():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 64
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_ERROR_EXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
@@ -191,7 +191,7 @@ def test_can_error_frame():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 40
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_ERROR
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
@@ -209,7 +209,7 @@ def test_can_error_frame_ext():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 64
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_ERROR_EXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
@@ -236,7 +236,7 @@ def test_canfd_error_frame64():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 152
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_ERROR_64
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
@@ -272,7 +272,7 @@ def test_can_driver_hw_sync():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 40
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_SYNC
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
@@ -291,7 +291,7 @@ def test_can_overload_frame():
     assert obj.header.base.signature == b"LOBJ"
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
-    assert obj.header.base.object_size == 40
+    assert obj.header.base.object_size == len(raw)
     assert obj.header.base.object_type is ObjTypeEnum.CAN_OVERLOAD
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 4369
