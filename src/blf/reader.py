@@ -102,7 +102,7 @@ class BlfReader(AbstractContextManager["BlfReader"]):
                 container = LogContainer.unpack(obj_data)
                 uncompressed = (
                     zlib.decompress(container.data)
-                    if self.file_statistics.compression_level
+                    if self.file_statistics.compression_level > 0
                     else container.data
                 )
 
