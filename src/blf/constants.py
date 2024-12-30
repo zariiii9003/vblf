@@ -5,7 +5,7 @@ OBJ_SIGNATURE: Final = b"LOBJ"
 OBJ_SIGNATURE_SIZE: Final = len(OBJ_SIGNATURE)
 
 
-class ObjTypeEnum(IntEnum):
+class ObjType(IntEnum):
     UNKNOWN = 0
     CAN_MESSAGE = 1
     CAN_ERROR = 2
@@ -137,11 +137,11 @@ class ObjTypeEnum(IntEnum):
     TRIGGER_CONDITION = 128
 
     @staticmethod
-    def from_int(object_type: int) -> "ObjTypeEnum":
+    def from_int(object_type: int) -> "ObjType":
         try:
-            return ObjTypeEnum(object_type)
+            return ObjType(object_type)
         except ValueError:
-            return ObjTypeEnum.UNKNOWN
+            return ObjType.UNKNOWN
 
 
 class AppId(IntEnum):

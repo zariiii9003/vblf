@@ -13,7 +13,7 @@ from blf.can import (
     CanMessage2,
     CanOverloadFrame,
 )
-from blf.constants import ObjFlags, ObjTypeEnum
+from blf.constants import ObjFlags, ObjType
 from tests import DATA_DIR
 
 
@@ -24,7 +24,7 @@ def test_can_message():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_MESSAGE
+    assert obj.header.base.object_type is ObjType.CAN_MESSAGE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -44,7 +44,7 @@ def test_can_message2():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_MESSAGE2
+    assert obj.header.base.object_type is ObjType.CAN_MESSAGE2
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -68,7 +68,7 @@ def test_canfd_message():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_MESSAGE
+    assert obj.header.base.object_type is ObjType.CAN_FD_MESSAGE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -95,7 +95,7 @@ def test_canfd_message64():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_MESSAGE_64
+    assert obj.header.base.object_type is ObjType.CAN_FD_MESSAGE_64
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -129,7 +129,7 @@ def test_can_driver_statistic():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_STATISTIC
+    assert obj.header.base.object_type is ObjType.CAN_STATISTIC
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -153,7 +153,7 @@ def test_can_driver_error():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_ERROR
+    assert obj.header.base.object_type is ObjType.CAN_DRIVER_ERROR
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -172,7 +172,7 @@ def test_can_driver_error_ext():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_ERROR_EXT
+    assert obj.header.base.object_type is ObjType.CAN_DRIVER_ERROR_EXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -193,7 +193,7 @@ def test_can_error_frame():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_ERROR
+    assert obj.header.base.object_type is ObjType.CAN_ERROR
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -211,7 +211,7 @@ def test_can_error_frame_ext():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_ERROR_EXT
+    assert obj.header.base.object_type is ObjType.CAN_ERROR_EXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -238,7 +238,7 @@ def test_canfd_error_frame64():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_FD_ERROR_64
+    assert obj.header.base.object_type is ObjType.CAN_FD_ERROR_64
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -274,7 +274,7 @@ def test_can_driver_hw_sync():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_DRIVER_SYNC
+    assert obj.header.base.object_type is ObjType.CAN_DRIVER_SYNC
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -293,7 +293,7 @@ def test_can_overload_frame():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.CAN_OVERLOAD
+    assert obj.header.base.object_type is ObjType.CAN_OVERLOAD
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0

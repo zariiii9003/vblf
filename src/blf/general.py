@@ -10,7 +10,7 @@ from blf.constants import (
     BusType,
     Compression,
     ObjFlags,
-    ObjTypeEnum,
+    ObjType,
     SysVarType,
     TriggerFlag,
 )
@@ -51,7 +51,7 @@ class ObjectHeaderBase:
     header_size: int
     header_version: int
     object_size: int
-    object_type: ObjTypeEnum
+    object_type: ObjType
 
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
@@ -67,7 +67,7 @@ class ObjectHeaderBase:
             header_size,
             header_version,
             object_size,
-            ObjTypeEnum.from_int(object_type),
+            ObjType.from_int(object_type),
         )
 
     @classmethod
@@ -84,7 +84,7 @@ class ObjectHeaderBase:
             header_size,
             header_version,
             object_size,
-            ObjTypeEnum.from_int(object_type),
+            ObjType.from_int(object_type),
         )
 
     def pack(self) -> bytes:

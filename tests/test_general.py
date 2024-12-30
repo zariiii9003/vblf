@@ -4,7 +4,7 @@ from blf.constants import (
     BusType,
     Compression,
     ObjFlags,
-    ObjTypeEnum,
+    ObjType,
     SysVarType,
     TriggerFlag,
 )
@@ -61,7 +61,7 @@ def test_app_text():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.APP_TEXT
+    assert obj.header.base.object_type is ObjType.APP_TEXT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0
     assert obj.header.object_version == 0
@@ -81,7 +81,7 @@ def test_app_trigger():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.APP_TRIGGER
+    assert obj.header.base.object_type is ObjType.APP_TRIGGER
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -101,7 +101,7 @@ def test_environment_variable_integer():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.ENV_INTEGER
+    assert obj.header.base.object_type is ObjType.ENV_INTEGER
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -121,7 +121,7 @@ def test_environment_variable_double():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.ENV_DOUBLE
+    assert obj.header.base.object_type is ObjType.ENV_DOUBLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -141,7 +141,7 @@ def test_environment_variable_string():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.ENV_STRING
+    assert obj.header.base.object_type is ObjType.ENV_STRING
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -161,7 +161,7 @@ def test_environment_variable_data():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.ENV_DATA
+    assert obj.header.base.object_type is ObjType.ENV_DATA
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -181,7 +181,7 @@ def test_system_variable_double():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
+    assert obj.header.base.object_type is ObjType.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -204,7 +204,7 @@ def test_system_variable_long():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
+    assert obj.header.base.object_type is ObjType.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -227,7 +227,7 @@ def test_system_variable_string():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
+    assert obj.header.base.object_type is ObjType.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -250,7 +250,7 @@ def test_system_variable_double_array():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
+    assert obj.header.base.object_type is ObjType.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -277,7 +277,7 @@ def test_system_variable_long_array():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
+    assert obj.header.base.object_type is ObjType.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -300,7 +300,7 @@ def test_system_variable_longlong():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
+    assert obj.header.base.object_type is ObjType.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -323,7 +323,7 @@ def test_system_variable_bytearray():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.SYS_VARIABLE
+    assert obj.header.base.object_type is ObjType.SYS_VARIABLE
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -346,7 +346,7 @@ def test_real_time_clock():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.REALTIMECLOCK
+    assert obj.header.base.object_type is ObjType.REALTIMECLOCK
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -363,7 +363,7 @@ def test_driver_overrun():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.OVERRUN_ERROR
+    assert obj.header.base.object_type is ObjType.OVERRUN_ERROR
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -381,7 +381,7 @@ def test_event_comment():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.EVENT_COMMENT
+    assert obj.header.base.object_type is ObjType.EVENT_COMMENT
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
@@ -400,7 +400,7 @@ def test_global_marker():
     assert obj.header.base.header_size == 32
     assert obj.header.base.header_version == 1
     assert obj.header.base.object_size == len(raw)
-    assert obj.header.base.object_type is ObjTypeEnum.GLOBAL_MARKER
+    assert obj.header.base.object_type is ObjType.GLOBAL_MARKER
     assert obj.header.object_flags is ObjFlags.TIME_ONE_NANS
     assert obj.header.client_index == 0x1111
     assert obj.header.object_version == 0
