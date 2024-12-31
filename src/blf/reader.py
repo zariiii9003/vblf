@@ -21,7 +21,7 @@ from blf.can import (
     CanMessage2,
     CanOverloadFrame,
 )
-from blf.constants import OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjType
+from blf.constants import FILE_SIGNATURE, OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjType
 from blf.general import (
     AppText,
     AppTrigger,
@@ -57,7 +57,7 @@ class BlfReader(AbstractContextManager["BlfReader"]):
             raise TypeError(err_msg)
 
         obj_data = self._file.read(FileStatistics.SIZE)
-        if len(obj_data) < FileStatistics.SIZE or not obj_data.startswith(b"LOGG"):
+        if len(obj_data) < FileStatistics.SIZE or not obj_data.startswith(FILE_SIGNATURE):
             err_msg = "Unexpected file format"
             raise ValueError(err_msg)
 

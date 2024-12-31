@@ -1,10 +1,14 @@
+import datetime
 import struct
 from dataclasses import dataclass
-from typing import ClassVar, Union
+from typing import ClassVar, Optional, Union
 
 from typing_extensions import Self
 
+from blf import __version__
 from blf.constants import (
+    FILE_SIGNATURE,
+    OBJ_SIGNATURE,
     AppId,
     AppTextSource,
     BusType,
@@ -43,6 +47,21 @@ class SystemTime:
 
     def pack_into(self, buffer: bytearray, offset: int) -> None:
         return self._FORMAT.pack_into(buffer, offset, *self.__dict__.values())
+
+    @classmethod
+    def from_datetime(cls, dt: Optional[datetime.datetime] = None) -> Self:
+        if not dt:
+            dt = datetime.datetime.now(tz=datetime.timezone.utc)
+        return cls(
+            dt.year,
+            dt.month,
+            (dt.weekday() + 1) % 7,
+            dt.day,
+            dt.hour,
+            dt.minute,
+            dt.second,
+            min(999, round(dt.microsecond / 1000.0)),
+        )
 
 
 @dataclass
@@ -361,8 +380,25 @@ class FileStatistics:
         return bytes(buffer)
 
     @classmethod
-    def calc_size(cls) -> int:
-        return cls._FORMAT.size
+    def new(cls) -> Self:
+        major_version, minor_version, *_ = __version__.split(".")
+        return cls(
+            signature=FILE_SIGNATURE,
+            statistics_size=FileStatistics.SIZE,
+            api_number=0x3E4630,
+            application_id=AppId.UNKNOWN,
+            compression_level=Compression.DEFAULT,
+            application_major=int(major_version),
+            application_minor=int(minor_version),
+            file_size=FileStatistics.SIZE,
+            uncompressed_file_size=FileStatistics.SIZE,
+            object_count=0,
+            application_build=0,
+            measurement_start_time=SystemTime.from_datetime(),
+            last_object_time=SystemTime.from_datetime(),
+            restore_points_offset=0,
+            reserved=bytes(64),
+        )
 
 
 @dataclass
@@ -377,6 +413,33 @@ class LogContainer(ObjectWithHeader):
 
     def pack(self) -> bytes:
         return self.header.pack() + self.data
+
+    @classmethod
+    def new(
+        cls,
+        data: bytes,
+        time_stamp: int,
+        flags: ObjFlags = ObjFlags.TIME_ONE_NANS,
+        client_index: int = 0,
+    ) -> Self:
+        base = ObjectHeaderBase(
+            signature=OBJ_SIGNATURE,
+            header_size=ObjectHeader.SIZE,
+            header_version=1,
+            object_size=ObjectHeader.SIZE + len(data),
+            object_type=ObjType.LOG_CONTAINER,
+        )
+        header = ObjectHeader(
+            base=base,
+            object_flags=flags,
+            client_index=client_index,
+            object_version=0,
+            object_time_stamp=time_stamp,
+        )
+        return cls(
+            header=header,
+            data=data,
+        )
 
 
 @dataclass

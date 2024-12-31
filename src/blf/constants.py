@@ -1,6 +1,7 @@
 from enum import IntEnum, IntFlag
 from typing import Final
 
+FILE_SIGNATURE: Final = b"LOGG"
 OBJ_SIGNATURE: Final = b"LOBJ"
 OBJ_SIGNATURE_SIZE: Final = len(OBJ_SIGNATURE)
 
