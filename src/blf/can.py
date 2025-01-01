@@ -211,7 +211,7 @@ class CanFdMessage64(ObjectWithHeader):
             time_offset_brs_ns,
             time_offset_crc_del_ns,
             bit_count,
-            dir,
+            direction,
             ext_data_offset,
             crc,
         ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
@@ -222,7 +222,10 @@ class CanFdMessage64(ObjectWithHeader):
 
         # get ext frame data
         btr_ext_arb, btr_ext_data = 0, 0
-        if header.base.object_size >= ext_data_offset + cls._FORMAT_EXT.size:
+        if (
+            ext_data_offset != 0
+            and header.base.object_size >= ext_data_offset + cls._FORMAT_EXT.size
+        ):
             btr_ext_arb, btr_ext_data = cls._FORMAT_EXT.unpack_from(buffer, ext_data_offset)
 
         return cls(
@@ -239,7 +242,7 @@ class CanFdMessage64(ObjectWithHeader):
             time_offset_brs_ns,
             time_offset_crc_del_ns,
             bit_count,
-            dir,
+            direction,
             ext_data_offset,
             crc,
             data,
@@ -279,7 +282,10 @@ class CanFdMessage64(ObjectWithHeader):
         buffer[data_offset : data_offset + self.valid_data_bytes] = self.data
 
         # pack ext frame data
-        if self.header.base.object_size >= self.ext_data_offset + self._FORMAT_EXT.size:
+        if (
+            self.ext_data_offset != 0
+            and self.header.base.object_size >= self.ext_data_offset + self._FORMAT_EXT.size
+        ):
             self._FORMAT_EXT.pack_into(
                 buffer, self.ext_data_offset, self.btr_ext_arb, self.btr_ext_data
             )
