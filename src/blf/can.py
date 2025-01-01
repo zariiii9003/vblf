@@ -218,7 +218,8 @@ class CanFdMessage64(ObjectWithHeader):
 
         # get data
         data_offset = ObjectHeader.SIZE + cls._FORMAT.size
-        data = buffer[data_offset : data_offset + valid_data_bytes]
+        data_length = (ext_data_offset or header.base.object_size) - data_offset
+        data = buffer[data_offset : data_offset + data_length]
 
         # get ext frame data
         btr_ext_arb, btr_ext_data = 0, 0
@@ -279,7 +280,7 @@ class CanFdMessage64(ObjectWithHeader):
 
         # pack data
         data_offset = ObjectHeader.SIZE + self._FORMAT.size
-        buffer[data_offset : data_offset + self.valid_data_bytes] = self.data
+        buffer[data_offset : data_offset + len(self.data)] = self.data
 
         # pack ext frame data
         if (
