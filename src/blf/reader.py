@@ -39,7 +39,7 @@ from blf.general import (
     SystemVariable,
     TriggerCondition,
 )
-from blf.lin import LinMessage
+from blf.lin import LinMessage, LinMessage2
 
 LOG = logging.getLogger("blf")
 
@@ -192,7 +192,7 @@ OBJ_MAP: Final[dict[ObjType, Optional[type[ObjectWithHeader]]]] = {
     ObjType.LIN_STATISTIC: None,
     ObjType.J1708_MESSAGE: None,
     ObjType.J1708_VIRTUAL_MSG: None,
-    ObjType.LIN_MESSAGE2: None,
+    ObjType.LIN_MESSAGE2: LinMessage2,
     ObjType.LIN_SND_ERROR2: None,
     ObjType.LIN_SYN_ERROR2: None,
     ObjType.LIN_CRC_ERROR2: None,
