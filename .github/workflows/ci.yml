@@ -1,0 +1,131 @@
+name: CI
+
+on: [push, pull_request]
+
+env:
+  PY_COLORS: "1"
+
+jobs:
+  test:
+   runs-on:  ${{ matrix.os }}
+   strategy:
+     matrix:
+       os: [ "ubuntu-latest", "windows-latest", "macos-latest" ]
+       python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+     fail-fast: false
+   steps:
+   - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # 4.2.2
+     with:
+       fetch-depth: 0
+       persist-credentials: false
+   - name: Set up Python ${{ matrix.python-version }}
+     uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # 5.3.0
+     with:
+       python-version: ${{ matrix.python-version }}
+   - name: Install dependencies
+     run: |
+       python -m pip install --upgrade pip
+       python -m pip install tox
+   - name: Test
+     run: |
+       tox -e test
+
+  linter:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # 4.2.2
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Set up Python
+      uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # 5.3.0
+      with:
+        python-version: "3.11"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install tox
+    - name: Run ruff linter
+      run: |
+        tox -e format,lint,type
+
+  build:
+    name: Build package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # 4.2.2
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Set up Python
+      uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # 5.3.0
+      with:
+        python-version: "3.11"
+    - name: Install dependencies
+      run: python -m pip install build twine
+    - name: Build wheel and sdist
+      run: python -m build
+    - name: Check artifacts
+      run: twine check --strict dist/*
+    - uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b  # 4.5.0
+      with:
+        name: dist-artifact
+        path: dist/*
+
+  docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # 4.2.2
+      with:
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Set up Python
+      uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # 5.3.0
+      with:
+        python-version: "3.11"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install tox
+    - name: Build documentation
+      run: |
+        tox -e docs
+    - name: Upload documentation artifact
+      uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b  # 4.5.0
+      with:
+        name: doc-artifact
+        path: build/*
+
+  upload_pypi:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/blf
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+      contents: write  # for action-gh-release
+      attestations: write  # for attest-build-provenance
+
+    # create a new release for tagged commits
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+    - uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # 4.1.8
+      with:
+        name: dist-artifact
+        path: dist
+
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@7668571508540a607bdfd90a87a560489fe372eb  # 2.1.0
+      with:
+        subject-path: 'dist/*'
+
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@67339c736fd9354cd4f8cb0b744f2b82a74b5c70  # 1.12.3
+
+    - name: Release
+      uses: softprops/action-gh-release@7b4da11513bf3f43f9999e90eabced41ab8bb048  # 2.2.0
+      with:
+        files: dist/*
