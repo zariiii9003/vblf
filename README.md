@@ -37,8 +37,8 @@ with BlfReader("example.blf") as reader:
 ### Writing BLF Files
 
 ```python
-from blf import BlfWriter
-from blf.types import CanMessage
+from blf.can import CanMessage
+from blf.writer import BlfWriter
 
 # Create a new BLF file
 with BlfWriter("output.blf") as writer:
