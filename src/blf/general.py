@@ -462,7 +462,7 @@ class AppText(ObjectWithHeader):
             reserved2,
         ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         text_offset = ObjectHeader.SIZE + cls._FORMAT.size
-        text = buffer[text_offset : text_offset + text_length - 1].decode("mbcs")
+        text = buffer[text_offset : text_offset + text_length - 1].decode("cp1252")
         return cls(
             header,
             AppTextSource(source),
@@ -483,7 +483,7 @@ class AppText(ObjectWithHeader):
             self.text_length,
             self.reserved2,
         )
-        encoded_text = self.text.encode("mbcs") + b"\x00"
+        encoded_text = self.text.encode("cp1252") + b"\x00"
         text_offset = ObjectHeader.SIZE + self._FORMAT.size
         buffer[text_offset : text_offset + self.text_length] = encoded_text
         return bytes(buffer)
@@ -545,7 +545,7 @@ class EnvironmentVariable(ObjectWithHeader):
 
         # get name
         name_offset = ObjectHeader.SIZE + cls._FORMAT.size
-        name = buffer[name_offset : name_offset + name_length].decode("mbcs")
+        name = buffer[name_offset : name_offset + name_length].decode("cp1252")
 
         # get data
         data_offset = name_offset + name_length
@@ -577,7 +577,7 @@ class EnvironmentVariable(ObjectWithHeader):
 
         # write name
         name_offset = ObjectHeader.SIZE + self._FORMAT.size
-        buffer[name_offset : name_offset + self.name_length] = self.name.encode("mbcs")
+        buffer[name_offset : name_offset + self.name_length] = self.name.encode("cp1252")
 
         # write data
         data_offset = name_offset + self.name_length
@@ -613,7 +613,7 @@ class SystemVariable(ObjectWithHeader):
 
         # get name
         name_offset = ObjectHeader.SIZE + cls._FORMAT.size
-        name = buffer[name_offset : name_offset + name_length].decode("mbcs")
+        name = buffer[name_offset : name_offset + name_length].decode("cp1252")
 
         # get data
         data_offset = name_offset + name_length
@@ -651,7 +651,7 @@ class SystemVariable(ObjectWithHeader):
 
         # write name
         name_offset = ObjectHeader.SIZE + self._FORMAT.size
-        buffer[name_offset : name_offset + self.name_length] = self.name.encode("mbcs")
+        buffer[name_offset : name_offset + self.name_length] = self.name.encode("cp1252")
 
         # write data
         data_offset = name_offset + self.name_length
@@ -726,7 +726,7 @@ class EventComment(ObjectWithHeader):
             reserved,
         ) = cls._FORMAT.unpack_from(buffer, ObjectHeader.SIZE)
         text_offset = ObjectHeader.SIZE + cls._FORMAT.size
-        text = buffer[text_offset : text_offset + text_length].decode("mbcs")
+        text = buffer[text_offset : text_offset + text_length].decode("cp1252")
         return cls(
             header,
             commented_event_type,
@@ -745,7 +745,7 @@ class EventComment(ObjectWithHeader):
             self.text_length,
             self.reserved,
         )
-        encoded_text = self.text.encode("mbcs")
+        encoded_text = self.text.encode("cp1252")
         text_offset = ObjectHeader.SIZE + self._FORMAT.size
         buffer[text_offset : text_offset + self.text_length] = encoded_text
         return bytes(buffer)
@@ -790,17 +790,17 @@ class GlobalMarker(ObjectWithHeader):
         # get group_name
         group_name_offset = ObjectHeader.SIZE + cls._FORMAT.size
         _group_name = buffer[group_name_offset : group_name_offset + group_name_length]
-        group_name = _group_name.decode("mbcs")
+        group_name = _group_name.decode("cp1252")
 
         # get marker_name
         marker_name_offset = group_name_offset + group_name_length
         _marker_name = buffer[marker_name_offset : marker_name_offset + marker_name_length]
-        marker_name = _marker_name.decode("mbcs")
+        marker_name = _marker_name.decode("cp1252")
 
         # get marker_name
         description_offset = marker_name_offset + marker_name_length
         _description = buffer[description_offset : description_offset + description_length]
-        description = _description.decode("mbcs")
+        description = _description.decode("cp1252")
 
         return cls(
             header,
@@ -836,9 +836,9 @@ class GlobalMarker(ObjectWithHeader):
                 self.reserved3,
                 self.reserved4,
             )
-            + self.group_name.encode("mbcs")
-            + self.marker_name.encode("mbcs")
-            + self.description.encode("mbcs")
+            + self.group_name.encode("cp1252")
+            + self.marker_name.encode("cp1252")
+            + self.description.encode("cp1252")
         )
 
 
@@ -866,7 +866,7 @@ class FunctionBus(ObjectWithHeader):
         # get name
         name_offset = ObjectHeader.SIZE + cls._FORMAT.size
         _name = buffer[name_offset : name_offset + name_length]
-        name = _name.decode("mbcs")
+        name = _name.decode("cp1252")
 
         # get data
         data_offset = name_offset + name_length
@@ -891,7 +891,7 @@ class FunctionBus(ObjectWithHeader):
                 self.name_length,
                 self.data_length,
             )
-            + self.name.encode("mbcs")
+            + self.name.encode("cp1252")
             + self.data
         )
 
@@ -920,14 +920,14 @@ class TriggerCondition(ObjectWithHeader):
         _trigger_block_name = buffer[
             trigger_block_name_offset : trigger_block_name_offset + trigger_block_name_length
         ]
-        trigger_block_name = _trigger_block_name.decode("mbcs")
+        trigger_block_name = _trigger_block_name.decode("cp1252")
 
         # get trigger_condition
         trigger_condition_offset = trigger_block_name_offset + trigger_block_name_length
         _trigger_condition = buffer[
             trigger_condition_offset : trigger_condition_offset + trigger_condition_length
         ]
-        trigger_condition = _trigger_condition.decode("mbcs")
+        trigger_condition = _trigger_condition.decode("cp1252")
 
         return cls(
             header,
@@ -946,6 +946,6 @@ class TriggerCondition(ObjectWithHeader):
                 self.trigger_block_name_length,
                 self.trigger_condition_length,
             )
-            + self.trigger_block_name.encode("mbcs")
-            + self.trigger_condition.encode("mbcs")
+            + self.trigger_block_name.encode("cp1252")
+            + self.trigger_condition.encode("cp1252")
         )
