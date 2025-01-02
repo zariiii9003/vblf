@@ -33,7 +33,7 @@ def test_can_message():
     assert obj.flags == 0x22
     assert obj.dlc == 0x33
     assert obj.frame_id == 0x44444444
-    assert obj.data == bytes([0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC])
+    assert obj.data == b"\x55\x66\x77\x88\x99\xaa\xbb\xcc"
     assert obj.pack() == raw
 
 
