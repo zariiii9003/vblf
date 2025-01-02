@@ -39,6 +39,7 @@ from blf.general import (
     SystemVariable,
     TriggerCondition,
 )
+from blf.lin import LinMessage
 
 LOG = logging.getLogger("blf")
 
@@ -145,7 +146,7 @@ OBJ_MAP: Final[dict[ObjType, Optional[type[ObjectWithHeader]]]] = {
     ObjType.ENV_STRING: EnvironmentVariable,
     ObjType.ENV_DATA: EnvironmentVariable,
     ObjType.LOG_CONTAINER: LogContainer,
-    ObjType.LIN_MESSAGE: None,
+    ObjType.LIN_MESSAGE: LinMessage,
     ObjType.LIN_CRC_ERROR: None,
     ObjType.LIN_DLC_INFO: None,
     ObjType.LIN_RCV_ERROR: None,
