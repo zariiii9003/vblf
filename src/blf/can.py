@@ -16,7 +16,7 @@ class CanMessage(ObjectWithHeader):
     channel: int
     flags: int
     dlc: int
-    frame_id: int
+    id: int
     data: bytes
 
     @classmethod
@@ -43,7 +43,7 @@ class CanMessage(ObjectWithHeader):
             self.channel,
             self.flags,
             self.dlc,
-            self.frame_id,
+            self.id,
             self.data,
         )
 
@@ -55,7 +55,7 @@ class CanMessage2(ObjectWithHeader):
     channel: int
     flags: int
     dlc: int
-    frame_id: int
+    id: int
     data: bytes
     frame_length: int
     bit_count: int
@@ -94,7 +94,7 @@ class CanMessage2(ObjectWithHeader):
             self.channel,
             self.flags,
             self.dlc,
-            self.frame_id,
+            self.id,
             self.data,
             self.frame_length,
             self.bit_count,
@@ -110,7 +110,7 @@ class CanFdMessage(ObjectWithHeader):
     channel: int
     flags: int
     dlc: int
-    frame_id: int
+    id: int
     frame_length: int
     arb_bit_count: int
     canfd_flags: CanFdFlags
@@ -158,7 +158,7 @@ class CanFdMessage(ObjectWithHeader):
             self.channel,
             self.flags,
             self.dlc,
-            self.frame_id,
+            self.id,
             self.frame_length,
             self.arb_bit_count,
             self.canfd_flags,
@@ -179,7 +179,7 @@ class CanFdMessage64(ObjectWithHeader):
     dlc: int
     valid_data_bytes: int
     tx_count: int
-    frame_id: int
+    id: int
     frame_length: int
     flags: CanFdFlags
     btr_cfg_arb: int
@@ -265,7 +265,7 @@ class CanFdMessage64(ObjectWithHeader):
             self.dlc,
             self.valid_data_bytes,
             self.tx_count,
-            self.frame_id,
+            self.id,
             self.frame_length,
             self.flags,
             self.btr_cfg_arb,
@@ -474,7 +474,7 @@ class CanErrorFrameExt(ObjectWithHeader):
     dlc: int
     reserved1: int
     frame_length_in_ns: int
-    frame_id: int
+    id: int
     flags_ext: int
     reserved2: int
     data: bytes
@@ -522,7 +522,7 @@ class CanErrorFrameExt(ObjectWithHeader):
             self.dlc,
             self.reserved1,
             self.frame_length_in_ns,
-            self.frame_id,
+            self.id,
             self.flags_ext,
             self.reserved2,
             self.data,
@@ -543,7 +543,7 @@ class CanFdErrorFrame64(ObjectWithHeader):
     ext_flags: int
     ext_data_offset: int
     reserved1: int
-    frame_id: int
+    id: int
     frame_length: int
     btr_cfg_arb: int
     btr_cfg_data: int
@@ -635,7 +635,7 @@ class CanFdErrorFrame64(ObjectWithHeader):
             self.ext_flags,
             self.ext_data_offset,
             self.reserved1,
-            self.frame_id,
+            self.id,
             self.frame_length,
             self.btr_cfg_arb,
             self.btr_cfg_data,

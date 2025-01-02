@@ -32,7 +32,7 @@ def test_can_message():
     assert obj.channel == 0x1111
     assert obj.flags == 0x22
     assert obj.dlc == 0x33
-    assert obj.frame_id == 0x44444444
+    assert obj.id == 0x44444444
     assert obj.data == b"\x55\x66\x77\x88\x99\xaa\xbb\xcc"
     assert obj.pack() == raw
 
@@ -52,7 +52,7 @@ def test_can_message2():
     assert obj.channel == 0x1111
     assert obj.flags == 0x22
     assert obj.dlc == 0x33
-    assert obj.frame_id == 0x44444444
+    assert obj.id == 0x44444444
     assert obj.data == b"\x55\x66\x77\x88\x99\xaa\xbb\xcc"
     assert obj.frame_length == 0xDDDDDDDD
     assert obj.bit_count == 0xEE
@@ -76,7 +76,7 @@ def test_canfd_message():
     assert obj.channel == 0x1111
     assert obj.flags == 0x22
     assert obj.dlc == 0x33
-    assert obj.frame_id == 0x44444444
+    assert obj.id == 0x44444444
     assert obj.frame_length == 0x55555555
     assert obj.arb_bit_count == 0x66
     assert obj.canfd_flags == 0x77
@@ -104,7 +104,7 @@ def test_canfd_message64():
     assert obj.dlc == 8
     assert obj.valid_data_bytes == 8
     assert obj.tx_count == 0
-    assert obj.frame_id == 0xA8
+    assert obj.id == 0xA8
     assert obj.frame_length == 104238
     assert obj.flags == 3158016
     assert isinstance(obj.flags, CanFdFlags)
@@ -224,7 +224,7 @@ def test_can_error_frame_ext():
     assert obj.dlc == 0x66
     assert obj.reserved1 == 0x77
     assert obj.frame_length_in_ns == 0x88888888
-    assert obj.frame_id == 0x99999999
+    assert obj.id == 0x99999999
     assert obj.flags_ext == 0xAAAA
     assert obj.reserved2 == 0xBBBB
     assert obj.data == b"\xcc\xdd\xee\xff\x11\x22\x33\x44"
@@ -252,7 +252,7 @@ def test_canfd_error_frame64():
     assert obj.ext_flags == 0x7777
     assert obj.ext_data_offset == 140
     assert obj.reserved1 == 0x99
-    assert obj.frame_id == 0xAAAAAAAA
+    assert obj.id == 0xAAAAAAAA
     assert obj.frame_length == 0xBBBBBBBB
     assert obj.btr_cfg_arb == 0xCCCCCCCC
     assert obj.btr_cfg_data == 0xDDDDDDDD
