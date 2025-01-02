@@ -36,6 +36,9 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
         self._file.write(self._file_statistics.pack())
 
     def write(self, obj: ObjectWithHeader) -> None:
+        # byte alignment
+        if rest := len(self._buffer) % 4:
+            self._buffer.extend(b"\x00" * (4 - rest))
         obj_data = obj.pack()
         self._buffer.extend(obj_data)
         self._file_statistics.object_count += 1
@@ -49,6 +52,10 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
         if not self._buffer:
             return
 
+        # byte alignment
+        if rest := self._file.tell() % 4:
+            self._file.write(b"\x00" * (4 - rest))
+
         if self._file_statistics.compression_level > Compression.NONE:
             compressed_data = zlib.compress(
                 self._buffer, level=self._file_statistics.compression_level
@@ -61,7 +68,6 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
             time_stamp=round((time.time() - self._measurement_start_time) * 1e9),
             flags=ObjFlags.TIME_ONE_NANS,
         )
-
         self._file.write(log_container.pack())
         self._buffer.clear()
 
