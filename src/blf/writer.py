@@ -3,10 +3,12 @@ import os
 import time
 import zlib
 from contextlib import AbstractContextManager
-from typing import Any, BinaryIO
+from typing import Any, BinaryIO, Final
 
 from blf.constants import Compression, ObjFlags
 from blf.general import FileStatistics, LogContainer, ObjectWithHeader, SystemTime
+
+BYTE_ALIGNMENT: Final = 8
 
 
 class BlfWriter(AbstractContextManager["BlfWriter"]):
@@ -37,9 +39,12 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
 
     def write(self, obj: ObjectWithHeader) -> None:
         # byte alignment
-        if rest := len(self._buffer) % 4:
-            self._buffer.extend(b"\x00" * (4 - rest))
+        if rest := len(self._buffer) % BYTE_ALIGNMENT:
+            self._buffer.extend(b"\x00" * (BYTE_ALIGNMENT - rest))
         obj_data = obj.pack()
+        if len(obj_data) != obj.header.base.object_size:
+            err_msg = f"Object size mismatch: {len(obj_data)} != {obj.header.base.object_size}"
+            raise ValueError(err_msg)
         self._buffer.extend(obj_data)
         self._file_statistics.object_count += 1
         self._file_statistics.uncompressed_file_size += len(obj_data)
@@ -53,8 +58,8 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
             return
 
         # byte alignment
-        if rest := self._file.tell() % 4:
-            self._file.write(b"\x00" * (4 - rest))
+        if rest := self._file.tell() % BYTE_ALIGNMENT:
+            self._file.write(b"\x00" * (BYTE_ALIGNMENT - rest))
 
         if self._file_statistics.compression_level > Compression.NONE:
             compressed_data = zlib.compress(
