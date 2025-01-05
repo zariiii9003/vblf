@@ -1,4 +1,4 @@
-# BLF (Binary Logging Format) Library
+# Binary Logging Format Library for Python
 
 [![PyPI - Version](https://img.shields.io/pypi/v/blf.svg)](https://pypi.org/project/blf)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blf.svg)](https://pypi.org/project/blf)
