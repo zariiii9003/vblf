@@ -45,7 +45,24 @@ LOG = logging.getLogger("blf")
 
 
 class BlfReader(AbstractContextManager["BlfReader"]):
+    """Binary Log Format (BLF) file reader.
+
+    Reads Vector BLF log files and provides an iterator interface to access
+    the contained objects. Handles automatic decompression of log containers.
+
+    :param file: Path to BLF file or file-like object
+    :raises TypeError: If file parameter is of unsupported type
+    :raises ValueError: If file format is invalid
+
+    :ivar file_statistics: Statistics about the BLF file
+    :type file_statistics: FileStatistics
+    """
+
     def __init__(self, file: Union[str, bytes, os.PathLike[Any], BinaryIO]):
+        """Initialize BLF reader.
+
+        See class documentation for details.
+        """
         self._file: BinaryIO
         if isinstance(file, (str, bytes, os.PathLike)):
             self._file = open(file, "rb")  # noqa: SIM115
@@ -68,6 +85,11 @@ class BlfReader(AbstractContextManager["BlfReader"]):
         self._generator = self._generate_objects(self._file)
 
     def _generate_objects(self, stream: BinaryIO) -> Iterator[ObjectWithHeader]:
+        """Generate objects from the BLF stream.
+
+        :param stream: Binary stream containing BLF data
+        :returns: Iterator yielding parsed BLF objects
+        """
         while True:
             # find start of next object (search for b"LOBJ")
             signature = stream.read(OBJ_SIGNATURE_SIZE)
@@ -120,9 +142,17 @@ class BlfReader(AbstractContextManager["BlfReader"]):
                 yield obj_class.unpack(obj_data)
 
     def __iter__(self) -> Iterator[ObjectWithHeader]:
+        """Iterate over objects in the BLF file.
+
+        :returns: Iterator yielding parsed BLF objects
+        """
         return self._generator.__iter__()
 
     def __enter__(self) -> "BlfReader":
+        """Enter context manager.
+
+        :returns: BlfReader instance
+        """
         return self
 
     def __exit__(
@@ -131,6 +161,12 @@ class BlfReader(AbstractContextManager["BlfReader"]):
         exc_value: Optional[BaseException],
         traceback: Optional[TracebackType],
     ) -> None:
+        """Exit context manager and close file.
+
+        :param exc_type: Exception type if an exception occurred
+        :param exc_value: Exception instance if an exception occurred
+        :param traceback: Traceback if an exception occurred
+        """
         self._file.close()
 
 

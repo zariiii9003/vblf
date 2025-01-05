@@ -12,12 +12,27 @@ BYTE_ALIGNMENT: Final = 8
 
 
 class BlfWriter(AbstractContextManager["BlfWriter"]):
+    """Binary Log Format (BLF) file writer.
+
+    Writes Vector BLF log files with optional compression. Handles automatic buffering
+    and container creation for optimal file structure.
+
+    :param file: Path to BLF file or file-like object
+    :param compression_level: Compression level (0-9), defaults to no compression
+    :param buffer_size: Size of internal buffer in bytes before flushing, defaults to 128 KiB
+    :raises TypeError: If file parameter is of unsupported type
+    """
+
     def __init__(
         self,
         file: os.PathLike[Any],
         compression_level: Compression = Compression.NONE,
-        buffer_size: int = 1024,
+        buffer_size: int = 128 * 1024,
     ) -> None:
+        """Initialize BLF writer.
+
+        See class documentation for details.
+        """
         self._buffer_size = buffer_size
         self._buffer = bytearray()
         self._measurement_start_time = time.time()
@@ -38,6 +53,14 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
         self._file.write(self._file_statistics.pack())
 
     def write(self, obj: ObjectWithHeader) -> None:
+        """Write an object to the BLF file.
+
+        The object is first buffered and only written to disk when the buffer is full
+        or when the file is closed.
+
+        :param obj: Object to write
+        :raises ValueError: If object size doesn't match its header
+        """
         # byte alignment
         if rest := len(self._buffer) % BYTE_ALIGNMENT:
             self._buffer.extend(b"\x00" * (BYTE_ALIGNMENT - rest))
@@ -51,9 +74,14 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
         self._time_of_last_object = time.time()
 
         if len(self._buffer) >= self._buffer_size:
-            self._flush_buffer()
+            self._flush_container()
 
-    def _flush_buffer(self) -> None:
+    def _flush_container(self) -> None:
+        """Flush the internal buffer to disk.
+
+        Creates a LogContainer with the buffered data and writes it to the file.
+        Handles compression if enabled.
+        """
         if not self._buffer:
             return
 
@@ -61,12 +89,12 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
         if rest := self._file.tell() % BYTE_ALIGNMENT:
             self._file.write(b"\x00" * (BYTE_ALIGNMENT - rest))
 
+        buffer, self._buffer = self._buffer[: self._buffer_size], self._buffer[self._buffer_size :]
+
         if self._file_statistics.compression_level > Compression.NONE:
-            compressed_data = zlib.compress(
-                self._buffer, level=self._file_statistics.compression_level
-            )
+            compressed_data = zlib.compress(buffer, level=self._file_statistics.compression_level)
         else:
-            compressed_data = self._buffer
+            compressed_data = buffer
 
         log_container = LogContainer.new(
             data=compressed_data,
@@ -74,9 +102,14 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
             flags=ObjFlags.TIME_ONE_NANS,
         )
         self._file.write(log_container.pack())
+        self._file_statistics.file_size = self._file.tell()
         self._buffer.clear()
 
     def _update_file_statistics(self) -> None:
+        """Update file statistics and write them to the beginning of the file.
+
+        Updates the object count, file size and timestamps in the file header.
+        """
         self._file_statistics.last_object_time = SystemTime.from_datetime(
             datetime.datetime.fromtimestamp(self._time_of_last_object, datetime.timezone.utc)
         )
@@ -84,13 +117,28 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
         self._file.write(self._file_statistics.pack())
 
     def close(self) -> None:
+        """Close the BLF file.
+
+        Flushes any remaining buffered data and updates file statistics before closing.
+        """
         if not self._file.closed:
-            self._flush_buffer()
+            while self._buffer:
+                self._flush_container()
             self._update_file_statistics()
             self._file.close()
 
     def __enter__(self) -> "BlfWriter":
+        """Enter context manager.
+
+        :returns: BlfWriter instance
+        """
         return self
 
     def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
+        """Exit context manager and close file.
+
+        :param exc_type: Exception type if an exception occurred
+        :param exc_value: Exception instance if an exception occurred
+        :param traceback: Traceback if an exception occurred
+        """
         self.close()
