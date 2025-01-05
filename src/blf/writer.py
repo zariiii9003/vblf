@@ -103,7 +103,6 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
         )
         self._file.write(log_container.pack())
         self._file_statistics.file_size = self._file.tell()
-        self._buffer.clear()
 
     def _update_file_statistics(self) -> None:
         """Update file statistics and write them to the beginning of the file.
