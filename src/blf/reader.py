@@ -22,6 +22,7 @@ from blf.can import (
     CanOverloadFrame,
 )
 from blf.constants import FILE_SIGNATURE, OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjType
+from blf.flexray import FlexrayVFrReceiveMsgEx
 from blf.general import (
     AppText,
     AppTrigger,
@@ -141,6 +142,16 @@ class BlfReader(AbstractContextManager["BlfReader"]):
             else:
                 yield obj_class.unpack(obj_data)
 
+    def read_object(self) -> Optional[ObjectWithHeader]:
+        """Retrieve the next parsed object from the BLF file.
+
+        This method fetches the next object from the underlying generator that
+        parses the BLF file. If there are no more objects to read, it returns `None`.
+
+        :returns: The next parsed BLF object or `None` if the end of the file is reached.
+        """
+        return next(self._generator, None)
+
     def __iter__(self) -> Iterator[ObjectWithHeader]:
         """Iterate over objects in the BLF file.
 
@@ -237,7 +248,7 @@ OBJ_MAP: Final[dict[ObjType, Optional[type[ObjectWithHeader]]]] = {
     ObjType.LIN_SPIKE_EVENT2: None,
     ObjType.LIN_LONG_DOM_SIG: None,
     ObjType.APP_TEXT: AppText,
-    ObjType.FR_RCVMESSAGE_EX: None,
+    ObjType.FR_RCVMESSAGE_EX: FlexrayVFrReceiveMsgEx,
     ObjType.MOST_STATISTICEX: None,
     ObjType.MOST_TXLIGHT: None,
     ObjType.MOST_ALLOCTAB: None,
