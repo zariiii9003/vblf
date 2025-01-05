@@ -125,7 +125,7 @@ jobs:
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@67339c736fd9354cd4f8cb0b744f2b82a74b5c70  # 1.12.3
 
-    - name: Release
-      uses: softprops/action-gh-release@7b4da11513bf3f43f9999e90eabced41ab8bb048  # 2.2.0
-      with:
-        files: dist/*
+    # - name: Release
+    #   uses: softprops/action-gh-release@7b4da11513bf3f43f9999e90eabced41ab8bb048  # 2.2.0
+    #   with:
+    #     files: dist/*
