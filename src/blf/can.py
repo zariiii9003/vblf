@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from typing_extensions import Self
 
-from blf.constants import CanFdFlags
+from blf.constants import CanFdFlags, ObjFlags, ObjType
 
 from .general import ObjectHeader, ObjectWithHeader
 
@@ -45,6 +45,33 @@ class CanMessage(ObjectWithHeader):
             self.dlc,
             self.id,
             self.data,
+        )
+
+    @classmethod
+    def new(
+        cls,
+        object_flags: ObjFlags,
+        object_time_stamp: int,
+        channel: int,
+        flags: int,
+        dlc: int,
+        id: int,
+        data: bytes,
+    ) -> Self:
+        header = ObjectHeader.new(
+            ObjectHeader.SIZE + cls._FORMAT.size,
+            ObjType.CAN_MESSAGE,
+            object_flags,
+            0,
+            object_time_stamp,
+        )
+        return cls(
+            header,
+            channel,
+            flags,
+            dlc,
+            id,
+            data,
         )
 
 

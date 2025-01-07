@@ -65,6 +65,9 @@ lint.extend-select = [
     "UP",    # pyupgrade
     "W",     # pycodestyle
 ]
+lint.ignore = [
+    "PLR0913",  # too-many-arguments
+]
 lint.per-file-ignores."tests/**.py" = [
     "PL",    # pylint
 ]

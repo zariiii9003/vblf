@@ -1,7 +1,7 @@
 import datetime
 import struct
 from dataclasses import dataclass
-from typing import ClassVar, Optional, Union
+from typing import Any, ClassVar, Optional, Union
 
 from typing_extensions import Self
 
@@ -133,12 +133,16 @@ class HeaderWithBase:
     def pack_into(self, buffer: bytearray, offset: int) -> None:
         raise NotImplementedError
 
+    @classmethod
+    def new(cls, *args: Any, **kwargs: Any) -> Self:
+        raise NotImplementedError
+
 
 @dataclass
 class VarObjectHeader(HeaderWithBase):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IHHQ")
     SIZE: ClassVar[int] = ObjectHeaderBase.SIZE + _FORMAT.size
-    object_flags: int
+    object_flags: ObjFlags
     object_static_size: int
     object_version: int
     object_time_stamp: int
@@ -201,7 +205,7 @@ class VarObjectHeader(HeaderWithBase):
 class ObjectHeader(HeaderWithBase):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IHHQ")
     SIZE: ClassVar[int] = ObjectHeaderBase.SIZE + _FORMAT.size
-    object_flags: int
+    object_flags: ObjFlags
     client_index: int
     object_version: int
     object_time_stamp: int
@@ -259,6 +263,31 @@ class ObjectHeader(HeaderWithBase):
             self.object_time_stamp,
         )
 
+    @classmethod
+    def new(
+        cls,
+        object_size: int,
+        object_type: ObjType,
+        object_flags: ObjFlags,
+        object_version: int,
+        object_time_stamp: int,
+    ) -> Self:
+        base = ObjectHeaderBase(
+            signature=OBJ_SIGNATURE,
+            header_size=cls.SIZE,
+            header_version=1,
+            object_size=object_size,
+            object_type=object_type,
+        )
+        header = cls(
+            base,
+            object_flags,
+            0,
+            object_version,
+            object_time_stamp,
+        )
+        return header
+
 
 # @dataclass
 # class ObjectHeader2(ObjectHeaderBase):
@@ -281,6 +310,10 @@ class ObjectWithHeader:
         raise NotImplementedError
 
     def pack(self) -> bytes:
+        raise NotImplementedError
+
+    @classmethod
+    def new(cls, *args: Any, **kwargs: Any) -> Self:
         raise NotImplementedError
 
 
