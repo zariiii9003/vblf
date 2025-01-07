@@ -129,6 +129,39 @@ class CanMessage2(ObjectWithHeader):
             self.reserved2,
         )
 
+    @classmethod
+    def new(
+        cls,
+        object_flags: ObjFlags,
+        object_time_stamp: int,
+        channel: int,
+        flags: int,
+        dlc: int,
+        id: int,
+        data: bytes,
+        frame_length: int,
+        bit_count: int,
+    ) -> Self:
+        header = ObjectHeader.new(
+            ObjectHeader.SIZE + cls._FORMAT.size,
+            ObjType.CAN_MESSAGE,
+            object_flags,
+            0,
+            object_time_stamp,
+        )
+        return cls(
+            header,
+            channel,
+            flags,
+            dlc,
+            id,
+            data,
+            frame_length,
+            bit_count,
+            0,
+            0,
+        )
+
 
 @dataclass
 class CanFdMessage(ObjectWithHeader):
