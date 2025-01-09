@@ -1,4 +1,5 @@
-from blf.can import (
+from tests import DATA_DIR
+from vblf.can import (
     CanDriverError,
     CanDriverErrorExt,
     CanDriverHwSync,
@@ -13,8 +14,7 @@ from blf.can import (
     CanMessage2,
     CanOverloadFrame,
 )
-from blf.constants import ObjFlags, ObjType
-from tests import DATA_DIR
+from vblf.constants import ObjFlags, ObjType
 
 
 def test_can_message():

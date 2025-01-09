@@ -1,4 +1,4 @@
 Ethernet Objects
 ----------------
 
-.. automodule:: blf.ethernet
+.. automodule:: vblf.ethernet

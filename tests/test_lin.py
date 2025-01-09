@@ -1,6 +1,6 @@
-from blf.constants import ObjFlags, ObjType
-from blf.lin import LinMessage, LinMessage2
 from tests import DATA_DIR
+from vblf.constants import ObjFlags, ObjType
+from vblf.lin import LinMessage, LinMessage2
 
 
 def test_lin_message():

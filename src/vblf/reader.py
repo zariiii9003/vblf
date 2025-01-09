@@ -7,7 +7,7 @@ from io import BytesIO
 from types import TracebackType
 from typing import Any, BinaryIO, Final, Optional, Union
 
-from blf.can import (
+from vblf.can import (
     CanDriverError,
     CanDriverErrorExt,
     CanDriverHwSync,
@@ -21,9 +21,9 @@ from blf.can import (
     CanMessage2,
     CanOverloadFrame,
 )
-from blf.constants import FILE_SIGNATURE, OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjType
-from blf.flexray import FlexrayVFrReceiveMsgEx
-from blf.general import (
+from vblf.constants import FILE_SIGNATURE, OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjType
+from vblf.flexray import FlexrayVFrReceiveMsgEx
+from vblf.general import (
     AppText,
     AppTrigger,
     DriverOverrun,
@@ -40,9 +40,9 @@ from blf.general import (
     SystemVariable,
     TriggerCondition,
 )
-from blf.lin import LinMessage, LinMessage2
+from vblf.lin import LinMessage, LinMessage2
 
-LOG = logging.getLogger("blf")
+LOG = logging.getLogger("vblf")
 
 
 class BlfReader(AbstractContextManager["BlfReader"]):

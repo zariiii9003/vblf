@@ -1,7 +1,7 @@
 # Binary Logging Format Library for Python
 
-[![PyPI - Version](https://img.shields.io/pypi/v/blf.svg)](https://pypi.org/project/blf)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blf.svg)](https://pypi.org/project/blf)
+[![PyPI - Version](https://img.shields.io/pypi/v/vblf.svg)](https://pypi.org/project/vblf)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/vblf.svg)](https://pypi.org/project/vblf)
 
 ## Introduction
 
@@ -10,7 +10,7 @@ A Python library for reading and writing BLF files, a proprietary binary logging
 ## Installation
 
 ```bash
-pip install blf
+pip install vblf
 ```
 
 ## Usage
@@ -18,8 +18,8 @@ pip install blf
 ### Reading BLF Files
 
 ```python
-from blf.can import CanMessage, CanMessage2
-from blf.reader import BlfReader
+from vblf.can import CanMessage, CanMessage2
+from vblf.reader import BlfReader
 
 # Open a BLF file
 with BlfReader("example.blf") as reader:
@@ -29,7 +29,7 @@ with BlfReader("example.blf") as reader:
         print(f"Timestamp: {obj.header.object_time_stamp}")
 
         # Handle CAN messages
-        if isinstance(obj, (CanMessage, CanMessage2))
+        if isinstance(obj, (CanMessage, CanMessage2)):
             print(f"CAN ID: {obj.id}")
             print(f"Data: {obj.data.hex()}")
 ```
@@ -37,8 +37,8 @@ with BlfReader("example.blf") as reader:
 ### Writing BLF Files
 
 ```python
-from blf.can import CanMessage
-from blf.writer import BlfWriter
+from vblf.can import CanMessage
+from vblf.writer import BlfWriter
 
 # Create a new BLF file
 with BlfWriter("output.blf") as writer:

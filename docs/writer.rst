@@ -1,4 +1,4 @@
 BlfWriter
 ---------
 
-.. automodule:: blf.writer
+.. automodule:: vblf.writer

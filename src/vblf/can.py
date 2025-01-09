@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from typing_extensions import Self
 
-from blf.constants import CanFdFlags, ObjFlags, ObjType
+from vblf.constants import CanFdFlags, ObjFlags, ObjType
 
 from .general import ObjectHeader, ObjectWithHeader
 

@@ -1,4 +1,4 @@
 MOST Objects
 ------------
 
-.. automodule:: blf.most
+.. automodule:: vblf.most

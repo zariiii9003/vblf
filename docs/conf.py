@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "blf"
+project = "vblf"
 copyright = "2024, Artur Drogunow"
 author = "Artur Drogunow"
 

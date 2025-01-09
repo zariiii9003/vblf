@@ -1,6 +1,6 @@
-from blf.constants import ObjFlags, ObjType
-from blf.flexray import FlexrayVFrReceiveMsgEx
 from tests import DATA_DIR
+from vblf.constants import ObjFlags, ObjType
+from vblf.flexray import FlexrayVFrReceiveMsgEx
 
 
 def test_flexray_v_fr_receive_msg_ex():

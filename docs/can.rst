@@ -1,4 +1,4 @@
 CAN Objects
 -----------
 
-.. automodule:: blf.can
+.. automodule:: vblf.can

@@ -3,12 +3,12 @@ from pathlib import Path
 
 import pytest
 
-from blf.can import CanFdMessage64
-from blf.constants import Compression, ObjType
-from blf.general import ObjectHeaderBase
-from blf.reader import OBJ_MAP, BlfReader
-from blf.writer import BlfWriter
 from tests import DATA_DIR
+from vblf.can import CanFdMessage64
+from vblf.constants import Compression, ObjType
+from vblf.general import ObjectHeaderBase
+from vblf.reader import OBJ_MAP, BlfReader
+from vblf.writer import BlfWriter
 
 
 @pytest.mark.parametrize(

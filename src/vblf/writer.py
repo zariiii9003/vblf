@@ -5,8 +5,8 @@ import zlib
 from contextlib import AbstractContextManager
 from typing import Any, BinaryIO, Final
 
-from blf.constants import Compression, ObjFlags
-from blf.general import FileStatistics, LogContainer, ObjectWithHeader, SystemTime
+from vblf.constants import Compression, ObjFlags
+from vblf.general import FileStatistics, LogContainer, ObjectWithHeader, SystemTime
 
 BYTE_ALIGNMENT: Final = 8
 

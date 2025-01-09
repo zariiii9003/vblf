@@ -1,4 +1,4 @@
 BlfReader
 ---------
 
-.. automodule:: blf.reader
+.. automodule:: vblf.reader

@@ -1,4 +1,4 @@
 Constants
 ---------
 
-.. automodule:: blf.constants
+.. automodule:: vblf.constants

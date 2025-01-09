@@ -4,7 +4,7 @@ from typing import ClassVar
 
 from typing_extensions import Self
 
-from blf.general import ObjectHeader, ObjectWithHeader
+from vblf.general import ObjectHeader, ObjectWithHeader
 
 
 @dataclass

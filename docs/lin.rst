@@ -1,4 +1,4 @@
 LIN Objects
 -----------
 
-.. automodule:: blf.lin
+.. automodule:: vblf.lin

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 
 [project]
-name = "blf"
+name = "vblf"
 description = "A library to read and write Vector BLF files (binary log format)"
 readme = "README.md"
 authors = [{ name = "Artur Drogunow", email = "Artur.Drogunow@zf.com" }]
@@ -20,9 +20,9 @@ classifiers = [
 ]
 
 [project.urls]
-Issues = "https://github.com/zariiii9003/blf/issues"
-Source = "https://github.com/zariiii9003/blf"
-Homepage = "https://github.com/zariiii9003/blf"
+Issues = "https://github.com/zariiii9003/vblf/issues"
+Source = "https://github.com/zariiii9003/vblf"
+Homepage = "https://github.com/zariiii9003/vblf"
 
 [tool.setuptools_scm]
 # presence of this section triggers setuptools_scm to manage the version
@@ -41,7 +41,7 @@ test = [
     "pytest==8.3.*",
 ]
 lint = [
-    "ruff==0.8.5",
+    "ruff==0.9.0",
     "mypy==1.13.*",
 ]
 

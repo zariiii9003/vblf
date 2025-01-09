@@ -1,11 +1,11 @@
 BLF Library for Python
 ======================
 
-.. image:: https://img.shields.io/pypi/v/blf.svg
-   :target: https://pypi.org/project/blf
+.. image:: https://img.shields.io/pypi/v/vblf.svg
+   :target: https://pypi.org/project/vblf
    :alt: PyPI - Version
-.. image:: https://img.shields.io/pypi/pyversions/blf.svg
-   :target: https://pypi.org/project/blf
+.. image:: https://img.shields.io/pypi/pyversions/vblf.svg
+   :target: https://pypi.org/project/vblf
    :alt: PyPI - Python Version
 
 
@@ -35,7 +35,7 @@ Installation
 
 .. code-block:: bash
 
-   pip install blf
+   pip install vblf
 
 Usage
 -----
@@ -45,8 +45,8 @@ Reading BLF Files
 
 .. code-block:: python
 
-   from blf.can import CanMessage, CanMessage2
-   from blf.reader import BlfReader
+   from vblf.can import CanMessage, CanMessage2
+   from vblf.reader import BlfReader
 
    # Open a BLF file
    with BlfReader("example.blf") as reader:
@@ -65,8 +65,8 @@ Writing BLF Files
 
 .. code-block:: python
 
-   from blf.can import CanMessage
-   from blf.writer import BlfWriter
+   from vblf.can import CanMessage
+   from vblf.writer import BlfWriter
 
    # Create a new BLF file
    with BlfWriter("output.blf") as writer:

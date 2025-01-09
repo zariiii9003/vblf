@@ -1,4 +1,4 @@
 FlexRay Objects
 ---------------
 
-.. automodule:: blf.flexray
+.. automodule:: vblf.flexray

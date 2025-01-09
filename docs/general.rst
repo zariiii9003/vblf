@@ -1,4 +1,4 @@
 General Objects
 ---------------
 
-.. automodule:: blf.general
+.. automodule:: vblf.general

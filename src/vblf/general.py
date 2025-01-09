@@ -5,8 +5,8 @@ from typing import Any, ClassVar, Optional, Union
 
 from typing_extensions import Self
 
-from blf import __version__
-from blf.constants import (
+from vblf import __version__
+from vblf.constants import (
     FILE_SIGNATURE,
     OBJ_SIGNATURE,
     AppId,

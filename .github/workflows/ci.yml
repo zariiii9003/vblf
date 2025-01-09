@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/blf
+      url: https://pypi.org/p/vblf
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
       contents: write  # for action-gh-release

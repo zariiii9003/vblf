@@ -1,4 +1,5 @@
-from blf.constants import (
+from tests import DATA_DIR
+from vblf.constants import (
     AppId,
     AppTextSource,
     BusType,
@@ -10,7 +11,7 @@ from blf.constants import (
     TriggerConditionStatus,
     TriggerFlag,
 )
-from blf.general import (
+from vblf.general import (
     AppText,
     AppTrigger,
     DriverOverrun,
@@ -23,7 +24,6 @@ from blf.general import (
     SystemVariable,
     TriggerCondition,
 )
-from tests import DATA_DIR
 
 
 def test_file_statistics():
