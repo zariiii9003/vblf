@@ -117,10 +117,10 @@ jobs:
         name: dist-artifact
         path: dist
 
-    - name: Generate artifact attestation
-      uses: actions/attest-build-provenance@7668571508540a607bdfd90a87a560489fe372eb  # 2.1.0
-      with:
-        subject-path: 'dist/*'
+#    - name: Generate artifact attestation
+#      uses: actions/attest-build-provenance@7668571508540a607bdfd90a87a560489fe372eb  # 2.1.0
+#      with:
+#        subject-path: 'dist/*'
 
     - name: Publish package distributions to PyPI
       uses: pypa/gh-action-pypi-publish@67339c736fd9354cd4f8cb0b744f2b82a74b5c70  # 1.12.3
