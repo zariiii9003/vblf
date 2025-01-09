@@ -33,10 +33,6 @@ dev = [
     "xsdata[cli]>=24.11",
     {include-group = "lint"},
 ]
-doc = [
-    "furo>=2024.8.6",
-    "sphinx>=8.1.3",
-]
 test = [
     "pytest==8.3.*",
 ]
