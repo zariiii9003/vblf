@@ -67,7 +67,7 @@ jobs:
       run: python -m build
     - name: Check artifacts
       run: twine check --strict dist/*
-    - uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b  # 4.5.0
+    - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08  # 4.6.0
       with:
         name: dist-artifact
         path: dist/*
@@ -92,7 +92,7 @@ jobs:
       run: |
         tox -e docs
     - name: Upload documentation artifact
-      uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b  # 4.5.0
+      uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08  # 4.6.0
       with:
         name: doc-artifact
         path: build/*
