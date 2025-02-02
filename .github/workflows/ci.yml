@@ -2,6 +2,8 @@ name: CI
 
 on: [push, pull_request]
 
+permissions: {}
+
 env:
   PY_COLORS: "1"
 

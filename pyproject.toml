@@ -2,7 +2,6 @@
 requires = ["setuptools>=64", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
-
 [project]
 name = "vblf"
 description = "A library to read and write Vector BLF files (binary log format)"
