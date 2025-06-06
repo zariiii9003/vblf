@@ -30,7 +30,7 @@ jobs:
        python -m pip install tox
    - name: Test
      run: |
-       tox -e test
+       tox -e py
 
   linter:
     runs-on: ubuntu-latest
