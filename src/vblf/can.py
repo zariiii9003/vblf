@@ -10,7 +10,7 @@ from .general import ObjectHeader, ObjectWithHeader
 
 
 @dataclass
-class CanMessage(ObjectWithHeader):
+class CanMessage(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBI8s")
     header: ObjectHeader
     channel: int
@@ -76,7 +76,7 @@ class CanMessage(ObjectWithHeader):
 
 
 @dataclass
-class CanMessage2(ObjectWithHeader):
+class CanMessage2(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBI8sIBBH")
     header: ObjectHeader
     channel: int
@@ -164,7 +164,7 @@ class CanMessage2(ObjectWithHeader):
 
 
 @dataclass
-class CanFdMessage(ObjectWithHeader):
+class CanFdMessage(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBIIBBBBI64sI")
     header: ObjectHeader
     channel: int
@@ -268,7 +268,7 @@ class CanFdMessage(ObjectWithHeader):
 
 
 @dataclass
-class CanFdMessage64(ObjectWithHeader):
+class CanFdMessage64(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("BBBBIIIIIIIHBBI")
     _FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")
     header: ObjectHeader
@@ -391,7 +391,7 @@ class CanFdMessage64(ObjectWithHeader):
 
 
 @dataclass
-class CanDriverStatistic(ObjectWithHeader):
+class CanDriverStatistic(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HHIIIIIII")
     header: ObjectHeader
     channel: int
@@ -446,7 +446,7 @@ class CanDriverStatistic(ObjectWithHeader):
 
 
 @dataclass
-class CanDriverError(ObjectWithHeader):
+class CanDriverError(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBI")
     header: ObjectHeader
     channel: int
@@ -481,7 +481,7 @@ class CanDriverError(ObjectWithHeader):
 
 
 @dataclass
-class CanDriverErrorExt(ObjectWithHeader):
+class CanDriverErrorExt(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBIIBBH4I")
     header: ObjectHeader
     channel: int
@@ -542,7 +542,7 @@ class CanDriverErrorExt(ObjectWithHeader):
 
 
 @dataclass
-class CanErrorFrame(ObjectWithHeader):
+class CanErrorFrame(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HHI")
     header: ObjectHeader
     channel: int
@@ -560,7 +560,7 @@ class CanErrorFrame(ObjectWithHeader):
 
 
 @dataclass
-class CanErrorFrameExt(ObjectWithHeader):
+class CanErrorFrameExt(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HHIBBBBIIHH8s")
     header: ObjectHeader
     channel: int
@@ -627,7 +627,7 @@ class CanErrorFrameExt(ObjectWithHeader):
 
 
 @dataclass
-class CanFdErrorFrame64(ObjectWithHeader):
+class CanFdErrorFrame64(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("BBBBHHHBBIIIIIIIHH")
     _FORMAT_EXT: ClassVar[struct.Struct] = struct.Struct("II")
     header: ObjectHeader
@@ -756,7 +756,7 @@ class CanFdErrorFrame64(ObjectWithHeader):
 
 
 @dataclass
-class CanDriverHwSync(ObjectWithHeader):
+class CanDriverHwSync(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBBI")
     header: ObjectHeader
     channel: int
@@ -777,7 +777,7 @@ class CanDriverHwSync(ObjectWithHeader):
 
 
 @dataclass
-class CanOverloadFrame(ObjectWithHeader):
+class CanOverloadFrame(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HHI")
     header: ObjectHeader
     channel: int

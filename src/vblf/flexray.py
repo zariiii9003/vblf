@@ -8,7 +8,7 @@ from vblf.general import ObjectHeader, ObjectWithHeader
 
 
 @dataclass
-class FlexrayVFrReceiveMsgEx(ObjectWithHeader):
+class FlexrayVFrReceiveMsgEx(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HHHHIIHHHHHHIIIIIIHHH26s")
     header: ObjectHeader
     channel: int

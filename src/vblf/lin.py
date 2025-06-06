@@ -8,7 +8,7 @@ from vblf.general import ObjectHeader, ObjectWithHeader
 
 
 @dataclass
-class LinMessage(ObjectWithHeader):
+class LinMessage(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("HBB8sBBBBHB5s")
     header: ObjectHeader
     channel: int
@@ -199,7 +199,7 @@ class LinDatabyteTimestampEvent:
 
 
 @dataclass
-class LinMessage2(ObjectWithHeader):
+class LinMessage2(ObjectWithHeader[ObjectHeader]):
     _FORMAT_V1: ClassVar[struct.Struct] = struct.Struct("8sHBBBBBBB3s")
     _FORMAT_V2: ClassVar[struct.Struct] = struct.Struct("I")
     _FORMAT_V3: ClassVar[struct.Struct] = struct.Struct("dII")

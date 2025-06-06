@@ -6,7 +6,7 @@ from contextlib import AbstractContextManager
 from typing import Any, BinaryIO, Final
 
 from vblf.constants import Compression, ObjFlags
-from vblf.general import FileStatistics, LogContainer, ObjectWithHeader, SystemTime
+from vblf.general import FileStatistics, HeaderWithBase, LogContainer, ObjectWithHeader, SystemTime
 
 BYTE_ALIGNMENT: Final = 8
 
@@ -52,7 +52,7 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
         self._file_statistics.compression_level = compression_level
         self._file.write(self._file_statistics.pack())
 
-    def write(self, obj: ObjectWithHeader) -> None:
+    def write(self, obj: ObjectWithHeader[HeaderWithBase]) -> None:
         """Write an object to the BLF file.
 
         The object is first buffered and only written to disk when the buffer is full
@@ -94,7 +94,7 @@ class BlfWriter(AbstractContextManager["BlfWriter"]):
         if self._file_statistics.compression_level > Compression.NONE:
             compressed_data = zlib.compress(buffer, level=self._file_statistics.compression_level)
         else:
-            compressed_data = buffer
+            compressed_data = bytes(buffer)
 
         log_container = LogContainer.new(
             data=compressed_data,

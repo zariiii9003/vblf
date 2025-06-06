@@ -1,7 +1,7 @@
 import datetime
 import struct
 from dataclasses import dataclass
-from typing import Any, ClassVar, Optional, Union
+from typing import ClassVar, Generic, Optional, TypeVar, Union
 
 from typing_extensions import Self
 
@@ -20,6 +20,8 @@ from vblf.constants import (
     TriggerConditionStatus,
     TriggerFlag,
 )
+
+HeaderType = TypeVar("HeaderType", bound="HeaderWithBase")
 
 
 @dataclass
@@ -131,10 +133,6 @@ class HeaderWithBase:
         raise NotImplementedError
 
     def pack_into(self, buffer: bytearray, offset: int) -> None:
-        raise NotImplementedError
-
-    @classmethod
-    def new(cls, *args: Any, **kwargs: Any) -> Self:
         raise NotImplementedError
 
 
@@ -302,8 +300,8 @@ class ObjectHeader(HeaderWithBase):
 
 
 @dataclass
-class ObjectWithHeader:
-    header: HeaderWithBase
+class ObjectWithHeader(Generic[HeaderType]):
+    header: HeaderType
 
     @classmethod
     def unpack(cls, buffer: bytes) -> Self:
@@ -312,13 +310,9 @@ class ObjectWithHeader:
     def pack(self) -> bytes:
         raise NotImplementedError
 
-    @classmethod
-    def new(cls, *args: Any, **kwargs: Any) -> Self:
-        raise NotImplementedError
-
 
 @dataclass
-class NotImplementedObject(ObjectWithHeader):
+class NotImplementedObject(ObjectWithHeader[HeaderWithBase]):
     header: HeaderWithBase
     buffer: bytes
 
@@ -435,7 +429,7 @@ class FileStatistics:
 
 
 @dataclass
-class LogContainer(ObjectWithHeader):
+class LogContainer(ObjectWithHeader[ObjectHeader]):
     header: ObjectHeader
     data: bytes
 
@@ -476,7 +470,7 @@ class LogContainer(ObjectWithHeader):
 
 
 @dataclass
-class AppText(ObjectWithHeader):
+class AppText(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIII")
     header: ObjectHeader
     source: AppTextSource
@@ -523,7 +517,7 @@ class AppText(ObjectWithHeader):
 
 
 @dataclass
-class AppTrigger(ObjectWithHeader):
+class AppTrigger(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("QQHHI")
     header: ObjectHeader
     pre_trigger_time: int
@@ -562,7 +556,7 @@ class AppTrigger(ObjectWithHeader):
 
 
 @dataclass
-class EnvironmentVariable(ObjectWithHeader):
+class EnvironmentVariable(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIQ")
     header: ObjectHeader
     name_length: int
@@ -620,7 +614,7 @@ class EnvironmentVariable(ObjectWithHeader):
 
 
 @dataclass
-class SystemVariable(ObjectWithHeader):
+class SystemVariable(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIQIIQ")
     header: ObjectHeader
     type: SysVarType
@@ -694,7 +688,7 @@ class SystemVariable(ObjectWithHeader):
 
 
 @dataclass
-class RealTimeClock(ObjectWithHeader):
+class RealTimeClock(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("QQ")
     header: ObjectHeader
     time: int
@@ -711,7 +705,7 @@ class RealTimeClock(ObjectWithHeader):
 
 
 @dataclass
-class DriverOverrun(ObjectWithHeader):
+class DriverOverrun(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IHH")
     header: ObjectHeader
     bus_type: BusType
@@ -742,7 +736,7 @@ class DriverOverrun(ObjectWithHeader):
 
 
 @dataclass
-class EventComment(ObjectWithHeader):
+class EventComment(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIQ")
     header: ObjectHeader
     commented_event_type: int
@@ -785,7 +779,7 @@ class EventComment(ObjectWithHeader):
 
 
 @dataclass
-class GlobalMarker(ObjectWithHeader):
+class GlobalMarker(ObjectWithHeader[ObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIIBBHIIIIQ")
     header: ObjectHeader
     commented_event_type: int
@@ -876,7 +870,7 @@ class GlobalMarker(ObjectWithHeader):
 
 
 @dataclass
-class FunctionBus(ObjectWithHeader):
+class FunctionBus(ObjectWithHeader[VarObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("IIII")
     header: VarObjectHeader
     object_type: FunctionBusType
@@ -930,7 +924,7 @@ class FunctionBus(ObjectWithHeader):
 
 
 @dataclass
-class TriggerCondition(ObjectWithHeader):
+class TriggerCondition(ObjectWithHeader[VarObjectHeader]):
     _FORMAT: ClassVar[struct.Struct] = struct.Struct("III")
     header: VarObjectHeader
     state: TriggerConditionStatus
