@@ -10,7 +10,7 @@ A Python library for reading and writing BLF files, a proprietary binary logging
 ## Installation
 
 ```bash
-pip install --pre vblf
+pip install vblf
 ```
 
 ## Usage
