@@ -29,3 +29,8 @@ repos:
     hooks:
       # Run the linter.
       - id: zizmor
+
+  - repo: https://github.com/twisted/towncrier
+    rev: 24.8.0  # run 'pre-commit autoupdate' to update
+    hooks:
+      - id: towncrier-check
