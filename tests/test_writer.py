@@ -40,8 +40,7 @@ def test_roundtrip(compression_level: Compression):
                 writer.write(obj)
         # Read objects from BLF file and compare
         with BlfReader(output_file) as reader:
-            for obj in reader:
-                roundtrip_objects.append(obj)
+            roundtrip_objects.extend(reader)
 
     assert len(original_objects) == len(roundtrip_objects)
     for original_obj, written_obj in zip(original_objects, roundtrip_objects):

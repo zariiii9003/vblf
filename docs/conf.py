@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "vblf"
-copyright = "2024, Artur Drogunow"
+copyright = "2024, Artur Drogunow"  # noqa: A001
 author = "Artur Drogunow"
 
 # -- General configuration ---------------------------------------------------

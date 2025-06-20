@@ -36,27 +36,32 @@ test = [
     "pytest==8.3.*",
 ]
 lint = [
-    "ruff==0.11.13",
+    "ruff==0.12.0",
     "mypy==1.16.*",
 ]
 
 [tool.ruff]
 line-length = 100
 lint.extend-select = [
+    "A",     # flake8-builtins
     "B",     # flake8-bugbear
+    "BLE",   # flake8-blind-except
     "C4",    # flake8-comprehensions
     "E",     # pycodestyle
     "EM",    # flake8-errmsg
     "F",     # pyflakes
+    "FURB",  # refurb
     "G",     # flake8-logging-format
     "I",     # isort
     "N",     # pep8-naming
+    "PERF",  # Perflint
     "PIE",   # flake8-pie
     "PL",    # pylint
     "RSE",   # flake8-raise
     "RUF",   # Ruff-specific rules
     "SIM",   # flake8-simplify
-    "TCH",   # flake8-type-checking
+    "T20",   # flake8-print
+    "TC",    # flake8-type-checking
     "UP",    # pyupgrade
     "W",     # pycodestyle
 ]

@@ -18,7 +18,7 @@ def test_flexray_v_fr_receive_msg_ex():
     assert obj.channel == 0x1111
     assert obj.version == 0x2222
     assert obj.channel_mask == 0x3333
-    assert obj.dir == 0x4444
+    assert obj.dir_flags == 0x4444
     assert obj.client_index == 0x55555555
     assert obj.cluster_no == 0x66666666
     assert obj.frame_id == 0x7777

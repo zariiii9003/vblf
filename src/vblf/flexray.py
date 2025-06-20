@@ -14,7 +14,7 @@ class FlexrayVFrReceiveMsgEx(ObjectWithHeader[ObjectHeader]):
     channel: int
     version: int
     channel_mask: int
-    dir: int
+    dir_flags: int
     client_index: int
     cluster_no: int
     frame_id: int
@@ -42,7 +42,7 @@ class FlexrayVFrReceiveMsgEx(ObjectWithHeader[ObjectHeader]):
             channel,
             version,
             channel_mask,
-            dir,
+            dir_flags,
             client_index,
             cluster_no,
             frame_id,
@@ -73,7 +73,7 @@ class FlexrayVFrReceiveMsgEx(ObjectWithHeader[ObjectHeader]):
             channel,
             version,
             channel_mask,
-            dir,
+            dir_flags,
             client_index,
             cluster_no,
             frame_id,
@@ -104,7 +104,7 @@ class FlexrayVFrReceiveMsgEx(ObjectWithHeader[ObjectHeader]):
             self.channel,
             self.version,
             self.channel_mask,
-            self.dir,
+            self.dir_flags,
             self.client_index,
             self.cluster_no,
             self.frame_id,
