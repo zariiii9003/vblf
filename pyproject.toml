@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64", "setuptools-scm>=8"]
+requires = ["setuptools==80.*", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,7 +9,7 @@ readme = "README.md"
 authors = [{ name = "Artur Drogunow", email = "Artur.Drogunow@zf.com" }]
 license = { text = "MIT" }
 requires-python = ">=3.9"
-dependencies = [ "typing_extensions" ]
+dependencies = [ "typing_extensions>=4.0.0" ]
 dynamic = ["version"]
 keywords = ["BLF", "Vector", "binary log format", "Automotive"]
 classifiers = [
