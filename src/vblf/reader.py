@@ -42,6 +42,7 @@ from vblf.general import (
     TriggerCondition,
 )
 from vblf.lin import LinMessage, LinMessage2
+from vblf.tp_diag import DiagRequestInterpretation
 
 LOG = logging.getLogger("vblf")
 
@@ -302,7 +303,7 @@ OBJ_MAP: Final[dict[ObjType, Optional[type[ObjectWithHeader[Any]]]]] = {
     ObjType.reserved_6: None,
     ObjType.reserved_7: None,
     ObjType.TEST_STRUCTURE: None,
-    ObjType.DIAG_REQUEST_INTERPRETATION: None,
+    ObjType.DIAG_REQUEST_INTERPRETATION: DiagRequestInterpretation,
     ObjType.ETHERNET_FRAME_EX: EthernetFrameEx,
     ObjType.ETHERNET_FRAME_FORWARDED: None,
     ObjType.ETHERNET_ERROR_EX: None,
