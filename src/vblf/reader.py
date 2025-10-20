@@ -22,6 +22,7 @@ from vblf.can import (
     CanOverloadFrame,
 )
 from vblf.constants import FILE_SIGNATURE, OBJ_SIGNATURE, OBJ_SIGNATURE_SIZE, ObjType
+from vblf.ethernet import EthernetFrameEx, EthernetStatistic
 from vblf.flexray import FlexrayVFrReceiveMsgEx
 from vblf.general import (
     AppText,
@@ -296,13 +297,13 @@ OBJ_MAP: Final[dict[ObjType, Optional[type[ObjectWithHeader[Any]]]]] = {
     ObjType.A429_STATUS: None,
     ObjType.A429_BUS_STATISTIC: None,
     ObjType.A429_MESSAGE: None,
-    ObjType.ETHERNET_STATISTIC: None,
+    ObjType.ETHERNET_STATISTIC: EthernetStatistic,
     ObjType.reserved_5: None,
     ObjType.reserved_6: None,
     ObjType.reserved_7: None,
     ObjType.TEST_STRUCTURE: None,
     ObjType.DIAG_REQUEST_INTERPRETATION: None,
-    ObjType.ETHERNET_FRAME_EX: None,
+    ObjType.ETHERNET_FRAME_EX: EthernetFrameEx,
     ObjType.ETHERNET_FRAME_FORWARDED: None,
     ObjType.ETHERNET_ERROR_EX: None,
     ObjType.ETHERNET_ERROR_FORWARDED: None,
