@@ -8,6 +8,13 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [v0.2.0](https://github.com/zariiii9003/vblf/tree/v0.2.0) - 2025-10-21
+
+### Added
+
+- Implement EthernetFrameEx, EthernetStatistic and DiagRequestInterpretation. ([#10](https://github.com/zariiii9003/vblf/issues/10))
+
+
 ## [v0.1.0](https://github.com/zariiii9003/vblf/tree/v0.1.0) - 2025-06-20
 
 ### Added
