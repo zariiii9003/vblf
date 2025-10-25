@@ -87,7 +87,9 @@ class BlfReader(AbstractContextManager["BlfReader"]):
         self._incomplete_data: bytes = b""
         self._generator = self._generate_objects(self._file)
 
-    def _generate_objects(self, stream: BinaryIO) -> Iterator[ObjectWithHeader[Any]]:
+    def _generate_objects(
+        self, stream: BinaryIO
+    ) -> Iterator[tuple[ObjType, type[ObjectWithHeader[Any]], bytes]]:
         """Generate objects from the BLF stream.
 
         :param stream: Binary stream containing BLF data
@@ -142,7 +144,7 @@ class BlfReader(AbstractContextManager["BlfReader"]):
                 yield from self._generate_objects(BytesIO(uncompressed))
 
             else:
-                yield obj_class.unpack(obj_data)
+                yield header_base.object_type, obj_class, obj_data
 
     def read_object(self) -> Optional[ObjectWithHeader[Any]]:
         """Retrieve the next parsed object from the BLF file.
@@ -152,14 +154,23 @@ class BlfReader(AbstractContextManager["BlfReader"]):
 
         :returns: The next parsed BLF object or `None` if the end of the file is reached.
         """
-        return next(self._generator, None)
+        if obj_tuple := next(self._generator, None):
+            _obj_type, obj_class, obj_data = obj_tuple
+            return obj_class.unpack(obj_data)
+        return None
 
     def __iter__(self) -> Iterator[ObjectWithHeader[Any]]:
         """Iterate over objects in the BLF file.
 
         :returns: Iterator yielding parsed BLF objects
         """
-        return self._generator.__iter__()
+
+        def object_generator() -> Iterator[ObjectWithHeader[Any]]:
+            for obj_tuple in self._generator:
+                _obj_type, obj_class, obj_data = obj_tuple
+                yield obj_class.unpack(obj_data)
+
+        return object_generator()
 
     def __enter__(self) -> "BlfReader":
         """Enter context manager.
