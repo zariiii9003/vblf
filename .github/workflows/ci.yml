@@ -77,7 +77,7 @@ jobs:
       run: python -m build
     - name: Check artifacts
       run: twine check --strict dist/*
-    - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # 4.6.2
+    - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4  # 5.0.0
       with:
         name: dist-artifact
         path: dist/*
@@ -102,7 +102,7 @@ jobs:
       run: |
         tox -e docs
     - name: Upload documentation artifact
-      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # 4.6.2
+      uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4  # 5.0.0
       with:
         name: doc-artifact
         path: build/*
@@ -122,7 +122,7 @@ jobs:
     # create a new release for tagged commits
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
-    - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0  # 5.0.0
+    - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53  # 6.0.0
       with:
         name: dist-artifact
         path: dist
