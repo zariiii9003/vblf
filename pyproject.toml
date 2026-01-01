@@ -36,8 +36,8 @@ test = [
     "pytest==8.4.*",
 ]
 lint = [
-    "ruff==0.13.3",
-    "mypy==1.18.*",
+    "ruff==0.14.10",
+    "mypy==1.19.*",
 ]
 
 [tool.ruff]
