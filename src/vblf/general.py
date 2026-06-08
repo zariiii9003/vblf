@@ -73,7 +73,7 @@ class SystemTime:
             self.hour,
             self.minute,
             self.second,
-            self.milliseconds * 1000,
+            min(999999, self.milliseconds * 1000),
         )
 
 
