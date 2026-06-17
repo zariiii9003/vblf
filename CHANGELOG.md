@@ -8,6 +8,11 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
 
 <!-- towncrier release notes start -->
 
+## [v0.3.1](https://github.com/zariiii9003/vblf/tree/v0.3.1) - 2026-06-17
+
+- SystemTime: tweak to_datetime() for edge case ([#18](https://github.com/zariiii9003/vblf/pull/20))
+
+
 ## [v0.3.0](https://github.com/zariiii9003/vblf/tree/v0.3.0) - 2026-05-31
 
 ### Added
