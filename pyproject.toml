@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools==82.*", "setuptools-scm>=8"]
+requires = ["setuptools==83.*", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -33,11 +33,11 @@ dev = [
     {include-group = "lint"},
 ]
 test = [
-    "pytest==8.4.*",
+    "pytest==9.1.*",
 ]
 lint = [
-    "ruff==0.15.*",
-    "mypy==1.19.*",
+    "ruff==0.16.*",
+    "mypy==2.3.*",
 ]
 
 [tool.ruff]
